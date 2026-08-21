@@ -1,0 +1,3089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+ <meta name="theme-color" content="#0e1621" />
+ <title>Gram Drop</title>
+ <script src="https://telegram.org/js/telegram-web-app.js"></script>
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700;800&display=swap" rel="stylesheet" />
+ <link rel="stylesheet" href="style.css?v=28" />
+</head>
+<body>
+ <!-- TON coin sprite (converted from the xRocket sticker) -->
+ <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="ic-ton" viewBox="0 0 512 512">
+ <path d="M256 40C375.3 40 472 136.7 472 256C472 375.3 375.3 472 256 472C136.7 472 40 375.3 40 256C40 136.7 136.7 40 256 40Z" fill="#30a1f5" fill-rule="evenodd"/>
+ <path d="M256 42.2C374.1 42.2 469.8 137.9 469.8 256C469.8 374.1 374.1 469.8 256 469.8C137.9 469.8 42.2 374.1 42.2 256C42.2 137.9 137.9 42.2 256 42.2Z" fill="none" stroke="#000" stroke-width="4.3" opacity=".06"/>
+ <path d="M301 155.6C271 155.6 241 155.6 211 155.6C199.1 155.6 193.1 155.6 187.6 157.2C186.47 157.6 185.3 158.03 184.1 158.5C182.97 159.03 181.83 159.6 180.7 160.2C179.63 160.8 178.57 161.43 177.5 162.1C176.5 162.83 175.53 163.6 174.6 164.4C170.2 168 167 173.1 160.5 183.1C150.97 197.93 141.43 212.77 131.9 227.6C127.6 234.3 125.5 237.6 124.9 241.1C124.4 244.2 124.7 247.4 125.9 250.3C127.2 253.6 130 256.4 135.6 262C171 297.4 206.4 332.8 241.8 368.2C246.8 373.2 249.3 375.6 252.1 376.6C254.6 377.4 257.4 377.4 259.9 376.6C262.7 375.6 265.2 373.2 270.2 368.2C305.6 332.8 341 297.4 376.4 262C382 256.4 384.8 253.6 386.1 250.3C386.37 249.57 386.6 248.83 386.8 248.1C387 247.3 387.13 246.53 387.2 245.8C387.27 245 387.3 244.2 387.3 243.4C387.3 242.67 387.23 241.9 387.1 241.1C386.5 237.6 384.4 234.3 380.1 227.6C370.57 212.77 361.03 197.93 351.5 183.1C345 173.1 341.8 168 337.4 164.4C336.47 163.6 335.5 162.83 334.5 162.1C333.43 161.43 332.37 160.8 331.3 160.2C330.17 159.6 329.03 159.03 327.9 158.5C326.7 158.03 325.53 157.6 324.4 157.2C318.9 155.6 313 155.6 301 155.6Z" fill="#fff"/>
+ <path d="M283.9 190.6C285.4 186.7 291 186.7 292.5 190.6C295.87 199.7 299.23 208.8 302.6 217.9C303.2 219.6 304.5 220.9 306.1 221.5C315.2 224.87 324.3 228.23 333.4 231.6C337.3 233 337.3 238.6 333.4 240.1C324.3 243.47 315.2 246.83 306.1 250.2C304.4 250.8 303.2 252.1 302.5 253.7C299.17 262.8 295.83 271.9 292.5 281C291 285 285.4 285 283.9 281C280.53 271.9 277.17 262.8 273.8 253.7C273.2 252.1 271.9 250.8 270.3 250.2C261.2 246.83 252.1 243.47 243 240.1C239.1 238.6 239.1 233 243 231.6C252.1 228.23 261.2 224.87 270.3 221.5C271.9 220.9 273.2 219.6 273.9 217.9C273.9 217.9 283.9 190.6 283.9 190.6Z" fill="#30a1f5"/>
+ </symbol>
+ </svg>
+
+ <!-- ======= SPLASH ======= -->
+ <div class="splash" id="splash">
+ <div class="splash-coin" id="splashCoin">
+ <svg><use href="#ic-ton"/></svg>
+ <div class="splash-ripple"></div>
+ </div>
+ <div class="splash-brand">Gram<span>Drop</span></div>
+ <div class="splash-sub">Watch · Play · Earn</div>
+ <div class="splash-bar"><i></i></div>
+ </div>
+
+ <!-- ======= GATE SCREENS (verification / banned / ip) ======= -->
+ <div class="gate hidden" id="gate">
+ <div class="gate-card">
+ <div class="gate-icon" id="gateIcon"><svg><use href="#ic-ton"/></svg></div>
+ <h2 id="gateTitle">Verify to continue</h2>
+ <p id="gateText">Join our channels to unlock Gram Drop</p>
+ <div class="verify-list" id="verifyList"></div>
+ <button class="btn primary full" id="gateAction">Verify</button>
+ <div class="gate-note" id="gateNote"></div>
+ </div>
+ </div>
+
+ <div id="app">
+
+ <!-- ======= HEADER ======= -->
+ <header class="app-header">
+ <div class="brand">
+ <div class="brand-logo" id="brandLogo">
+ <svg><use href="#ic-ton"/></svg>
+ </div>
+ <div class="brand-name" id="brandName">Gram<span>Drop</span></div>
+ </div>
+ <button class="balance-pill" id="headerBalancePill" data-goto="profile">
+ <svg class="ton-ic"><use href="#ic-ton"/></svg>
+ <span id="headerBalance">0</span>
+ </button>
+ </header>
+
+ <!-- ======= LIVE PAYOUTS TICKER ======= -->
+ <div class="ticker" id="ticker">
+ <div class="ticker-badge"><span class="live-dot"></span>LIVE</div>
+ <div class="ticker-viewport">
+ <div class="ticker-track" id="tickerTrack"></div>
+ </div>
+ </div>
+
+ <!-- ======= MAIN ======= -->
+ <main class="pages" id="pages">
+
+ <!-- ============ HOME ============ -->
+ <section class="page active" id="page-home">
+ <div class="balance-card">
+ <div class="bc-shine"></div>
+ <div class="bc-label">Your Balance</div>
+ <div class="bc-amount">
+ <svg class="ton-ic big"><use href="#ic-ton"/></svg>
+ <span id="homeBalance">0</span><em data-cur>GD</em>
+ </div>
+ <div class="bc-usd" id="homeUsd">≈ $0.00</div>
+ <div class="bc-actions">
+ <button class="bc-btn" data-goto="earn">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" fill="currentColor"/></svg>
+              Earn
+ </button>
+ <button class="bc-btn ghost" data-goto="profile">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+              Withdraw
+ </button>
+ </div>
+ </div>
+
+ <!-- Daily bonus -->
+ <div class="card row-card" id="dailyBonusCard">
+ <div class="icon-tile amber">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></svg>
+ </div>
+ <div class="card-info">
+ <div class="card-title">Daily Bonus</div>
+ <div class="card-sub" id="dailyBonusSub">Come back every day</div>
+ </div>
+ <button class="btn small" id="dailyBonusBtn">Claim</button>
+ </div>
+
+ <!-- Redeem code -->
+ <div class="card row-card" id="redeemCard">
+ <div class="icon-tile violet">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+ </div>
+ <div class="card-info">
+ <div class="card-title">Redeem Code</div>
+ <div class="card-sub">Have a promo code? Claim your reward</div>
+ </div>
+ <button class="btn small" id="redeemOpenBtn">Redeem</button>
+ </div>
+
+ <!-- Quick stats -->
+ <div class="stats-row">
+ <div class="stat">
+ <div class="stat-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 19h16"/></svg></div>
+ <div class="stat-val" id="statToday">0.000</div>
+ <div class="stat-label">Earned today</div>
+ </div>
+ <div class="stat">
+ <div class="stat-ic blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m10 9.5 4.5 2.5L10 14.5v-5Z" fill="currentColor" stroke="none"/></svg></div>
+ <div class="stat-val" id="statAds">0</div>
+ <div class="stat-label">Ads watched</div>
+ </div>
+ <div class="stat">
+ <div class="stat-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+ <div class="stat-val" id="statInvited">0</div>
+ <div class="stat-label">Friends invited</div>
+ </div>
+ </div>
+
+ <!-- How it works -->
+ <div class="section-title">How it works</div>
+ <div class="card steps-card">
+ <div class="step"><div class="step-num">1</div><div><b>Watch ads</b><span>Every ad adds GD to your balance instantly</span></div></div>
+ <div class="step"><div class="step-num">2</div><div><b>Play games</b><span>Win GD in mini games, paid straight to your balance</span></div></div>
+ <div class="step"><div class="step-num">3</div><div><b>Invite friends</b><span id="stepInvite">Earn when a friend becomes active · +10% forever</span></div></div>
+ <div class="step"><div class="step-num">4</div><div><b>Withdraw</b><span>Cash out in USDT BEP20 or GRAM</span></div></div>
+ </div>
+ </section>
+
+ <!-- ============ EARN ============ -->
+ <section class="page" id="page-earn">
+ <div class="page-head">
+ <h1>Earn</h1>
+ <p>Complete tasks and collect TON rewards</p>
+ </div>
+
+ <div class="seg" id="earnSeg">
+ <button class="seg-btn active" data-seg="0">
+ <svg viewBox="0 0 24 24" fill="none"><path d="m21.7 3.3-19 7.3c-1 .4-1 1.5 0 1.9l4.6 1.6 1.8 5.6c.3.9 1.4 1.1 2 .4l2.6-2.6 4.7 3.5c.8.6 1.9.2 2.1-.8l3-15.5c.2-1-.8-1.8-1.8-1.4Z" fill="currentColor"/></svg>
+            Telegram
+ </button>
+ <button class="seg-btn" data-seg="1">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="3"/><path d="m10 9.5 4.5 2.5L10 14.5v-5Z" fill="currentColor" stroke="none"/></svg>
+            Ads
+ </button>
+ <button class="seg-btn" data-seg="2">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 17a5 5 0 0 1-7-7l2-2a5 5 0 0 1 7 0"/><path d="M13 7a5 5 0 0 1 7 7l-2 2a5 5 0 0 1-7 0"/><path d="m8.5 15.5 7-7"/></svg>
+            Partners
+ </button>
+ <div class="seg-glider" id="segGlider"></div>
+ </div>
+
+ <div class="task-list" id="taskListTelegram"><div class="task-items" id="tgTaskItems"></div></div>
+
+ <div class="task-list hidden" id="taskListAds">
+ <div class="ads-daily card">
+ <div class="card-row">
+ <div class="card-info">
+ <div class="card-title">Today's ads</div>
+ <div class="card-sub" id="adCardSub">Rewarded ads · resets daily</div>
+ </div>
+ <div class="ad-counter"><b id="adCount">0</b>/<span id="adCap">0</span></div>
+ </div>
+ <div class="progress"><div class="progress-fill" id="adProgress"></div></div>
+ </div>
+ <div class="task-items" id="adNetworkItems"></div>
+ </div>
+
+ <div class="task-list hidden" id="taskListPartners"><div class="task-items" id="partnerTaskItems"></div></div>
+ </section>
+
+ <!-- ============ GAMES ============ -->
+ <section class="page" id="page-farm">
+ <div class="page-head">
+ <h1>Games</h1>
+ <p>Play, win and get paid straight to your balance</p>
+ </div>
+
+ <div class="card farm-hud">
+ <div class="hud-row">
+ <div class="tap-coin static"><svg><use href="#ic-ton"/></svg></div>
+ <div class="farm-top-info">
+ <div class="gp-balance"><span id="gpBalance">0</span><em data-cur>GD</em></div>
+ <div class="farm-rate">Rewards are added instantly</div>
+ </div>
+ </div>
+ </div>
+
+ <!-- pending win — must be claimed before another round -->
+ <div class="pending-claim hidden" id="pendingClaim">
+ <div class="pc-glow"></div>
+ <div class="pc-left">
+ <div class="pc-label">Pending win</div>
+ <div class="pc-amount"><span id="pcAmount">0</span><em data-cur>GD</em></div>
+ <div class="pc-note" id="pcNote">Watch a short ad to collect</div>
+ </div>
+ <button class="btn primary pc-btn" id="pcClaimBtn">Claim</button>
+ </div>
+
+ <div class="section-title">Mini games</div>
+ <div class="games-grid">
+ <button class="game-card" data-game="catch">
+ <div class="g-icon gi-blue"><svg class="gi-coin"><use href="#ic-ton"/></svg></div>
+ <b>Coin Catch</b><span>Catcher</span>
+ <i data-max="catch">up to 300 GD</i>
+ </button>
+ <button class="game-card" data-game="merge">
+ <div class="g-icon gi-violet">🔷</div>
+ <b>Merge 2048</b><span>Merge puzzle</span>
+ <i data-max="merge">up to 500 GD</i>
+ </button>
+ <button class="game-card" data-game="flappy">
+ <div class="g-icon gi-cyan">🚀</div>
+ <b>Flappy Coin</b><span>Arcade</span>
+ <i data-max="flappy">up to 300 GD</i>
+ </button>
+ <button class="game-card" data-game="whack">
+ <div class="g-icon gi-pink">💎</div>
+ <b>Gem Rush</b><span>Reflex</span>
+ <i data-max="whack">up to 300 GD</i>
+ </button>
+ </div>
+ </section>
+
+ <!-- ============ INVITE ============ -->
+ <section class="page" id="page-invite">
+ <div class="page-head">
+ <h1>Invite Friends</h1>
+ <p>Earn together with your friends</p>
+ </div>
+
+ <div class="invite-hero card">
+ <div class="invite-art">
+ <div class="invite-coin c1"><svg><use href="#ic-ton"/></svg></div>
+ <div class="invite-coin c2"><svg><use href="#ic-ton"/></svg></div>
+ <svg class="invite-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+ </div>
+ <div class="invite-headline">Earn from every friend</div>
+ <div class="invite-subline">+ 10% of everything they earn, forever</div>
+ <div class="tier-rows">
+ <div class="tier-row">
+ <div class="icon-tile green sm"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" fill="currentColor"/></svg></div>
+ <span id="tierActiveLabel">Friend watches 2 Adsgram ads</span><b id="tierActiveReward">+250 GD</b>
+ </div>
+ <div class="tier-row">
+ <div class="icon-tile violet sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8h7a3 3 0 0 1 0 6H7"/></svg></div>
+ <span>Of everything they earn</span><b id="tierPercent">+10%</b>
+ </div>
+ </div>
+ <div class="ref-box">
+ <div class="ref-link" id="refLink">t.me/GramDropBot?start=r000000</div>
+ <button class="ref-copy" id="copyRefBtn" aria-label="Copy link">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+ </button>
+ </div>
+ <button class="btn primary full" id="shareRefBtn">
+ <svg viewBox="0 0 24 24" fill="none"><path d="m21.7 3.3-19 7.3c-1 .4-1 1.5 0 1.9l4.6 1.6 1.8 5.6c.3.9 1.4 1.1 2 .4l2.6-2.6 4.7 3.5c.8.6 1.9.2 2.1-.8l3-15.5c.2-1-.8-1.8-1.8-1.4Z" fill="currentColor"/></svg>
+            Share on Telegram
+ </button>
+ </div>
+
+ <div class="stats-row">
+ <div class="stat">
+ <div class="stat-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+ <div class="stat-val" id="invStatCount">0</div>
+ <div class="stat-label">Invited</div>
+ </div>
+ <div class="stat">
+ <div class="stat-ic green"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" fill="currentColor"/></svg></div>
+ <div class="stat-val" id="invStatActive">0</div>
+ <div class="stat-label">Active</div>
+ </div>
+ <div class="stat">
+ <div class="stat-ic plain"><svg><use href="#ic-ton"/></svg></div>
+ <div class="stat-val" id="invStatEarned">0.000</div>
+ <div class="stat-label"><span data-cur>GD</span> earned</div>
+ </div>
+ </div>
+
+ <div class="section-title">Your friends</div>
+ <div id="friendsList">
+ <div class="empty-state" id="friendsEmpty">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+ <b>No friends yet</b>
+ <span>Share your link — your friends will appear here</span>
+ </div>
+ </div>
+ </section>
+
+ <!-- ============ PROFILE ============ -->
+ <section class="page" id="page-profile">
+ <div class="page-head">
+ <h1>Profile</h1>
+ <p>Your account &amp; withdrawals</p>
+ </div>
+
+ <!-- Account / balance card -->
+ <div class="profile-card">
+ <div class="pc-shine"></div>
+ <div class="pc-row">
+ <div class="avatar sm" id="avatar">GD</div>
+ <div class="pc-user">
+ <div class="pc-name" id="profileName">Gram Dropper</div>
+ <div class="pc-id" id="profileId">ID —</div>
+ </div>
+ <svg class="pc-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M7 5.5V3.7M17 5.5V3.7"/><path d="M2.5 10h19"/></svg>
+ </div>
+ <div class="pc-balance-label">Available balance</div>
+ <div class="pc-balance"><span id="profileBalance">0</span><em data-cur>GD</em></div>
+ <div class="pc-usd" id="profileUsd">≈ $0.00</div>
+ </div>
+
+ <!-- Withdraw -->
+ <div class="card withdraw-card">
+ <div class="wd-head">
+ <div class="card-title">Withdraw</div>
+ <div class="wd-badge locked" id="wdBadge">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+ <span id="wdBadgeLabel">Locked</span>
+ </div>
+ </div>
+
+ <!-- shown until the balance clears the minimum -->
+ <div class="wd-nobal hidden" id="wdNoBalance">
+ <div class="wd-nobal-ic">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+ </div>
+ <div class="wd-nobal-title">Minimum withdrawal is <b id="wdMinAmount">—</b></div>
+ <div class="wd-nobal-sub">
+              Please make sure you have enough balance to withdraw.
+              Keep earning and this unlocks automatically.
+ </div>
+ <div class="progress"><div class="progress-fill" id="wdBalBar"></div></div>
+ <div class="wd-nobal-prog" id="wdBalProg">—</div>
+ </div>
+
+ <div id="wdForm">
+ <div class="method-seg" id="methodSeg">
+ <button class="method-btn active" data-method="usdt">
+ <span class="usdt-dot">$</span>
+                USDT <em>(BEP20)</em>
+ </button>
+ <button class="method-btn" data-method="ton">
+ <svg class="ton-ic"><use href="#ic-ton"/></svg>
+                GRAM <em>(TON)</em>
+ </button>
+ </div>
+ <label class="field">
+ <span class="field-label" id="walletLabel">TON wallet address</span>
+ <div class="field-box">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+ <input type="text" id="walletInput" placeholder="UQ… / EQ…" autocomplete="off" spellcheck="false" />
+ </div>
+ </label>
+ <label class="field">
+ <span class="field-label">Amount <em id="amountHint">(min 0.5 GRAM)</em></span>
+ <div class="field-box">
+ <svg class="ton-ic"><use href="#ic-ton"/></svg>
+ <input type="number" id="amountInput" placeholder="0.00" min="0" step="0.01" inputmode="decimal" />
+ <button class="max-btn" id="maxBtn">MAX</button>
+ </div>
+ </label>
+ <button class="btn primary full" id="withdrawBtn">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V7"/><path d="m6 12 6-6 6 6"/><path d="M5 21h14"/></svg>
+              Request Withdrawal
+ </button>
+ <div class="wd-cooldown hidden" id="wdCooldownNote"></div>
+ <div class="fee-note" id="feeNote">Network fee 0.005 TON · usually arrives within 24h</div>
+ </div>
+ </div>
+
+ <div class="section-title">Withdrawal history</div>
+ <div id="historyList">
+ <div class="empty-state" id="historyEmpty">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+ <b>No withdrawals yet</b>
+ <span>Your payouts will show up here</span>
+ </div>
+ </div>
+
+ <!-- link comes from admin -> App settings (supportUrl); hidden until set -->
+ <div class="card links-card hidden" id="supportCard">
+ <button class="link-row" id="supportBtn">
+ <div class="icon-tile green sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5 0 9-4 9-9V6l-9-4-9 4v7c0 5 4 9 9 9Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+ <span>Support</span>
+ <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+ </button>
+ </div>
+
+ <div class="version-tag">Gram Drop v1.2</div>
+ </section>
+ </main>
+
+ <!-- ======= BOTTOM NAV ======= -->
+ <nav class="bottom-nav">
+ <button class="nav-btn active" data-page="home">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10.5 9-7.5 9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+ <span>Home</span>
+ </button>
+ <button class="nav-btn" data-page="earn">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.2A3 3 0 0 0 9.9 10c-.7 1.7.4 2.6 2.1 3s2.8 1.3 2.1 3a3 3 0 0 1-4.9.8"/><path d="M12 6.5v2M12 15.5v2"/></svg>
+ <span>Earn</span>
+ </button>
+ <button class="nav-btn nav-fab" data-page="farm">
+ <div class="fab-circle">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 7h11a4.5 4.5 0 0 1 4.4 3.6l.9 5a3.4 3.4 0 0 1-6.2 2.4L15.4 16H8.6l-1.2 2a3.4 3.4 0 0 1-6.2-2.4l.9-5A4.5 4.5 0 0 1 6.5 7Z"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="16.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg>
+ </div>
+ <span>Games</span>
+ </button>
+ <button class="nav-btn" data-page="invite">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+ <span>Invite</span>
+ </button>
+ <button class="nav-btn" data-page="profile">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4.5"/><path d="M4 21c.8-3.5 4-5.5 8-5.5s7.2 2 8 5.5"/></svg>
+ <span>Profile</span>
+ </button>
+ </nav>
+
+ <!-- ======= AD MODAL ======= -->
+ <div class="modal-backdrop hidden" id="adModal">
+ <div class="modal ad-modal">
+ <div class="ad-loading" id="adLoading">
+ <div class="ad-spinner"></div>
+ <div class="ad-load-title">Loading ad…</div>
+ <div class="ad-load-sub" id="adLoadSub">Powered by Adsgram</div>
+ </div>
+ <div class="ad-screen">
+ <div class="ad-tag">Ad</div>
+ <div class="ad-fake-content">
+ <div class="ad-logo-pulse">
+ <svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12L13 2Z" fill="currentColor"/></svg>
+ </div>
+ <div class="ad-fake-title">Sponsored content</div>
+ <div class="ad-fake-sub">Watch to the end to get your reward</div>
+ </div>
+ <div class="ad-timer">
+ <svg viewBox="0 0 44 44">
+ <circle class="ring-bg" cx="22" cy="22" r="19"></circle>
+ <circle class="ring-fg" id="adRing" cx="22" cy="22" r="19"></circle>
+ </svg>
+ <span id="adSeconds">5</span>
+ </div>
+ </div>
+ <div class="ad-reward hidden" id="adReward">
+ <div class="reward-burst">
+ <svg><use href="#ic-ton"/></svg>
+ </div>
+ <div class="reward-title" id="adRewardTitle">+0.01 TON</div>
+ <div class="reward-sub" id="adRewardSub">Reward earned!</div>
+ <button class="btn primary full" id="claimAdBtn">Claim reward</button>
+ </div>
+ </div>
+ </div>
+
+ <!-- ======= CONFIRM SHEET ======= -->
+ <div class="modal-backdrop hidden" id="confirmModal">
+ <div class="sheet">
+ <div class="sheet-grip"></div>
+ <div class="sheet-title">Confirm withdrawal</div>
+ <div class="confirm-rows">
+ <div class="c-row"><span>Method</span><b id="cMethod">—</b></div>
+ <div class="c-row"><span>Amount</span><b id="cAmount">—</b></div>
+ <div class="c-row"><span>Network fee</span><b id="cFee">—</b></div>
+ <div class="c-row"><span>To wallet</span><b id="cWallet">—</b></div>
+ <div class="c-row total"><span>You receive</span><b id="cTotal">—</b></div>
+ </div>
+ <button class="btn primary full" id="confirmWithdrawBtn">Confirm</button>
+ <button class="btn ghost full" id="cancelWithdrawBtn">Cancel</button>
+ </div>
+ </div>
+
+ <!-- ======= REDEEM SHEET ======= -->
+ <div class="modal-backdrop hidden" id="redeemModal">
+ <div class="sheet">
+ <div class="sheet-grip"></div>
+ <div class="sheet-title">Redeem Code</div>
+ <label class="field">
+ <span class="field-label">Enter your promo code</span>
+ <div class="field-box">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a3 3 0 0 0 0 6v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a3 3 0 0 0 0-6Z"/><path d="M13 5v2M13 11v2M13 17v2"/></svg>
+ <input type="text" id="redeemInput" placeholder="e.g. GRAMDROP" autocomplete="off" spellcheck="false" />
+ </div>
+ </label>
+ <button class="btn primary full" id="redeemSubmitBtn" style="margin-top:12px">Redeem</button>
+ <button class="btn ghost full" id="redeemCancelBtn">Cancel</button>
+ </div>
+ </div>
+
+ <!-- ======= GAME OVERLAY ======= -->
+ <div class="game-overlay hidden" id="gameOverlay">
+ <div class="game-top">
+ <button class="game-close" id="gameClose" aria-label="Close game">
+ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+ </button>
+ <div class="game-title" id="gameTitle">Game</div>
+ <div class="game-hud-right">
+ <div class="game-chip" id="gameTimerChip"><span id="gameTimer">30</span>s</div>
+ <div class="game-chip score"><b id="gameScore">0</b></div>
+ </div>
+ </div>
+ <div class="game-stage" id="gameStage"></div>
+ </div>
+
+ <!-- ======= AD NOT CLICKED ======= -->
+ <div class="modal-backdrop hidden" id="noClickModal">
+ <div class="modal noclick-modal">
+ <div class="nc-badge">!</div>
+ <div class="nc-title">ALMOST THERE!</div>
+ <p class="nc-text" id="noClickText">Your reward wasn't counted. To earn, you must <b>tap the blue banner</b> inside the ad — just letting it play isn't enough.</p>
+ <div class="nc-mock">
+ <div class="nc-mock-label">Tap this inside the ad</div>
+ <div class="nc-mock-btn">PLAY NOW</div>
+ </div>
+ <button class="btn primary full" id="noClickOk">Got it</button>
+ </div>
+ </div>
+
+ <!-- ======= WITHDRAW REQUIREMENTS SHEET ======= -->
+ <div class="modal-backdrop hidden" id="reqModal">
+ <div class="sheet">
+ <div class="sheet-grip"></div>
+ <div class="sheet-title">Unlock withdrawals</div>
+ <p class="off-sub">Finish these to request your first payout</p>
+ <div class="req">
+ <div class="req-top"><span>Watch <b id="reqAdsNeed">8</b> ads in <b>Earn &rsaquo; Ads</b></span><b id="reqAdsLabel">0/8</b></div>
+ <div class="progress"><div class="progress-fill" id="reqAdsBar"></div></div>
+ </div>
+ <div class="req" style="margin-top:14px">
+ <div class="req-top"><span>Get <b id="reqRefsNeed">2</b> active referrals</span><b id="reqRefsLabel">0/2</b></div>
+ <div class="progress"><div class="progress-fill" id="reqRefsBar"></div></div>
+ </div>
+ <div class="req-note" id="reqNote" style="margin-top:14px"></div>
+ <div class="req-hint">
+          Only <b>Adsgram</b> ads from the <b>Earn &rsaquo; Ads</b> tab count here.
+          Monetag ads, task ads, game ads and the ad on app open do <b>not</b>.
+ </div>
+ <div class="refresh-warn">
+          ⚠️ Not seeing your progress? Please <b>refresh the mini app</b> — close and reopen it.
+ </div>
+ <button class="btn primary full" id="reqGoEarn" style="margin-top:14px">Go earn</button>
+ <button class="btn ghost full" id="reqClose">Close</button>
+ </div>
+ </div>
+
+ <!-- ======= FRIENDS SHEET ======= -->
+ <div class="modal-backdrop hidden" id="friendsModal">
+ <div class="sheet">
+ <div class="sheet-grip"></div>
+ <div class="sheet-title">Your friends</div>
+ <div class="friends-scroll" id="friendsSheetBody"></div>
+ <button class="btn ghost full" id="friendsClose" style="margin-top:12px">Close</button>
+ </div>
+ </div>
+
+ <!-- ======= ROUND OVER SHEET ======= -->
+ <div class="modal-backdrop hidden" id="gameEndModal">
+ <div class="sheet">
+ <div class="sheet-grip"></div>
+ <div class="sheet-title" id="geTitle">Round over!</div>
+ <div class="off-earn">
+ <svg><use href="#ic-ton"/></svg>
+ <b id="geReward">0</b><em>GP</em>
+ </div>
+ <p class="off-sub">Score <b id="geScore">0</b> — nice run!</p>
+ <button class="btn primary full" id="geCollect2x">
+ <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4.5" width="19" height="15" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="m10 9.5 4.5 2.5L10 14.5v-5Z" fill="currentColor"/></svg>
+          Watch ad &amp; collect
+ </button>
+ <button class="btn ghost full" id="geCollect">Later</button>
+ </div>
+ </div>
+
+ <div class="toast-wrap" id="toastWrap"></div>
+ </div>
+
+ <script>
+/* ============================================================
+   Gram Drop — Telegram Mini App (production client)
+   All balances/rewards come from the server. The client never
+   decides what it earns — it only renders what the API returns.
+   ============================================================ */
+"use strict";
+
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+const API = "/api";
+
+/* Filled from GET /api/me — never trusted as a source of truth for money. */
+let CFG = null;
+let ME = null;
+let TASKS = [];
+
+const TASK_ICONS = {
+  tg: '<svg viewBox="0 0 24 24" fill="none"><path d="m21.7 3.3-19 7.3c-1 .4-1 1.5 0 1.9l4.6 1.6 1.8 5.6c.3.9 1.4 1.1 2 .4l2.6-2.6 4.7 3.5c.8.6 1.9.2 2.1-.8l3-15.5c.2-1-.8-1.8-1.8-1.4Z" fill="currentColor"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5Z"/></svg>',
+  story: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" stroke-dasharray="4 3"/><circle cx="12" cy="12" r="4.5" fill="currentColor" stroke="none"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none"><path d="M12 21S3.5 15.5 3.5 9.6A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.5 2.6C20.5 15.5 12 21 12 21Z" fill="currentColor"/></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4.5" width="19" height="15" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="m10 9.5 4.5 2.5L10 14.5v-5Z" fill="currentColor"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.7 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"/></svg>',
+  app: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><path d="M17.25 13.5v7.5M13.5 17.25H21"/></svg>',
+};
+const TON_SVG = '<svg class="ton-ic"><use href="#ic-ton"/></svg>';
+
+/* ---------------- device id ----------------
+   Stable per install: a random id kept in localStorage, mixed with a coarse
+   hardware fingerprint so clearing storage alone doesn't mint a new device. */
+function deviceId() {
+  const KEY = "gd_device";
+  let id = null;
+  try { id = localStorage.getItem(KEY); } catch {}
+  if (id && /^[A-Za-z0-9_-]{8,80}$/.test(id)) return id;
+
+  const fp = [
+    screen.width + "x" + screen.height,
+    screen.colorDepth,
+    navigator.hardwareConcurrency || 0,
+    navigator.maxTouchPoints || 0,
+    navigator.platform || "",
+    Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+    (navigator.language || ""),
+  ].join("|");
+
+  let h1 = 0x811c9dc5, h2 = 0x01000193;
+  for (let i = 0; i < fp.length; i++) {
+    h1 = Math.imul(h1 ^ fp.charCodeAt(i), 16777619) >>> 0;
+    h2 = Math.imul(h2 + fp.charCodeAt(i) * (i + 1), 2246822519) >>> 0;
+  }
+  const rand = (crypto.getRandomValues(new Uint32Array(2)));
+  id = (h1.toString(36) + h2.toString(36) + rand[0].toString(36) + rand[1].toString(36)).slice(0, 40);
+
+  try { localStorage.setItem(KEY, id); } catch {}
+  return id;
+}
+const DEVICE_ID = deviceId();
+
+/* ---------------- helpers ---------------- */
+const $ = (s) => document.querySelector(s);
+const CUR = () => (CFG && CFG.app.currency) || "GD";
+
+/* GD is a whole-number currency — thousands separators, no noise decimals */
+/* Friend names come from Telegram profiles, i.e. from other users. They go
+   into innerHTML, so they must be escaped or a display name containing markup
+   would execute in someone else's app. */
+function esc(v) {
+  return String(v == null ? "" : v)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function fmt(n) {
+  const v = Number(n || 0);
+  return Number.isInteger(v)
+    ? v.toLocaleString("en-US")
+    : v.toLocaleString("en-US", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+}
+/* No hardcoded fallback peg. A stale default (10 000 when the live peg is
+   200 000) would print a dollar figure 20x too high — better to show
+   nothing for the instant before config arrives than a wrong number. */
+const gdPerUsd = () => Number(CFG && CFG.economy && CFG.economy.gdPerUsd) || 0;
+const fmtUsd = (n) => {
+  const peg = gdPerUsd();
+  if (!peg) return "";
+  return "≈ $" + (Number(n || 0) / peg).toFixed(3);
+};
+
+function fmtGp(n) {
+  n = Math.floor(Number(n) || 0);
+  if (n < 1000) return String(n);
+  if (n < 1e6) {
+    const v = n / 1000;
+    return (v < 10 ? v.toFixed(2) : v < 100 ? v.toFixed(1) : Math.floor(v)).toString().replace(/\.0+$/, "") + "K";
+  }
+  return (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "M";
+}
+
+function fmtHms(ms) {
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+}
+
+function haptic(type) {
+  try {
+    if (!tg || !tg.HapticFeedback) return;
+    if (type === "success" || type === "error") tg.HapticFeedback.notificationOccurred(type);
+    else tg.HapticFeedback.impactOccurred(type || "light");
+  } catch {}
+}
+
+function toast(msg, type = "success") {
+  const wrap = $("#toastWrap");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  const ic = type === "error"
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>';
+  el.innerHTML = ic + "<span></span>";
+  el.querySelector("span").textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.classList.add("out"), 2100);
+  setTimeout(() => el.remove(), 2450);
+}
+
+function floatReward(x, y, text, cls) {
+  const el = document.createElement("div");
+  el.className = "float-reward" + (cls ? " " + cls : "");
+  el.textContent = text;
+  el.style.left = x + "px";
+  el.style.top = y + "px";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1150);
+}
+function floatFromEl(el, text, cls) {
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  floatReward(r.left + r.width / 2 - 26, r.top - 8, text, cls);
+}
+
+/* human-readable API errors */
+const ERRORS = {
+  daily_limit: "Daily ad limit reached — come back tomorrow",
+  already_credited: "Already claimed",
+  too_fast: "Please watch the full ad",
+  already_claimed: "Already claimed today",
+  not_ready: "Not ready yet",
+  invalid_code: "Invalid or expired code",
+  already_redeemed: "You already used this code",
+  exhausted: "This code has run out",
+  expired: "This code has expired",
+  not_enough_gp: "Not enough GP",
+  daily_cap: "Daily exchange limit reached",
+  no_spins: "No spins left today",
+  bad_address: "That wallet address doesn't look right",
+  below_min: "Below the minimum withdrawal",
+  insufficient_balance: "Not enough balance",
+  locked: "Withdrawals are still locked",
+  withdrawals_disabled: "Withdrawals are paused right now",
+  withdraw_cooldown: "You already have a recent request — try again later",
+  game_limit: "Daily limit reached for this game",
+  provider_disabled: "That ad network is off right now",
+  provider_daily_cap: "Daily limit reached for this network",
+  cooldown: "Please wait a moment before the next ad",
+  ad_not_verified: "Reward not confirmed — please try another ad",
+  pending_claim: "Claim your pending win first",
+  no_pending_claim: "Nothing to claim right now",
+  ad_required: "Please watch the ad first",
+  ad_not_watched: "Please watch the ad all the way through",
+  ad_already_used: "That ad was already used — watch another",
+  ad_purpose_mismatch: "Wrong ad type — please try again",
+  ad_unit_not_configured: "This ad slot isn't set up yet",
+  not_joined: "Please join the channel first, then claim",
+  banned: "Your account has been suspended",
+  too_many_requests: "Slow down a moment",
+  invalid_init_data: "Please open this app from Telegram",
+  maintenance: "Under maintenance — back shortly",
+};
+const humanError = (code) => ERRORS[code] || "Something went wrong";
+
+/* ---------------- API ---------------- */
+async function api(path, body) {
+  const res = await fetch(API + path, {
+    method: body === undefined ? "GET" : "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Telegram-InitData": (tg && tg.initData) || "",
+      "X-Device-Id": DEVICE_ID,
+    },
+    body: body === undefined ? undefined : JSON.stringify(body || {}),
+  });
+  let data = {};
+  try { data = await res.json(); } catch {}
+  if (!res.ok) {
+    const err = new Error(data.error || "request_failed");
+    err.code = data.error;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
+/* wraps a button action: disables it, shows API errors as toasts */
+/* `onError` may take over a specific failure — return true to suppress the
+   generic toast when a better explanation has already been shown. */
+async function guard(btn, fn, onError) {
+  if (btn) btn.disabled = true;
+  try {
+    await fn();
+  } catch (e) {
+    let handled = false;
+    if (typeof onError === "function") {
+      try { handled = onError(e) === true; } catch {}
+    }
+    if (!handled) {
+      toast(humanError(e.code), "error");
+      haptic("error");
+    }
+    if (e.code === "banned" || e.code === "invalid_init_data") showBlocker(humanError(e.code));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+/* ---------------- balance rendering ---------------- */
+let shownBalance = null;
+let balanceAnim = null;
+
+function setBalanceText(v) {
+  $("#headerBalance").textContent = fmt(v);
+  $("#homeBalance").textContent = fmt(v);
+  $("#profileBalance").textContent = fmt(v);
+}
+
+function setBalance(value) {
+  const target = Number(value || 0);
+  const from = shownBalance === null ? target : shownBalance;
+  shownBalance = target;
+  if (ME) ME.balance = target;
+  if (balanceAnim) cancelAnimationFrame(balanceAnim);
+  if (from === target) {
+    setBalanceText(target);
+  } else {
+    const start = performance.now();
+    const step = (t) => {
+      const p = Math.min(1, (t - start) / 600);
+      const e = 1 - Math.pow(1 - p, 3);
+      setBalanceText(from + (target - from) * e);
+      balanceAnim = p < 1 ? requestAnimationFrame(step) : null;
+    };
+    balanceAnim = requestAnimationFrame(step);
+  }
+  $("#homeUsd").textContent = fmtUsd(target);
+  $("#profileUsd").textContent = fmtUsd(target);
+  const gp = $("#gpBalance");
+  if (gp) gp.textContent = fmt(target);   // Games header mirrors the balance
+}
+
+function renderUser() {
+  const u = ME;
+  setBalance(u.balance);
+  // currency label is admin-configurable (default GD)
+  document.querySelectorAll("[data-cur]").forEach((el) => (el.textContent = CUR()));
+  $("#statToday").textContent = fmt(u.earnedToday);
+  $("#statAds").textContent = u.adsTotal;
+  $("#statInvited").textContent = u.invited;
+  $("#invStatCount").textContent = u.invited;
+  $("#invStatActive").textContent = u.activeRefs;
+  $("#invStatEarned").textContent = fmt(u.refEarned);
+  $("#profileName").textContent = u.name;
+  $("#profileId").textContent = "ID " + u.tgId;
+  $("#avatar").textContent =
+    (u.name || "GD").split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "GD";
+  $("#gpBalance").textContent = fmt(u.balance);
+
+  // ?startapp= launches the Main Mini App directly and passes start_param.
+  // (?start= would open a bot chat instead and needs bot code to answer,
+  //  which silently loses the referral.)
+  $("#refLink").textContent = refLinkFor(u.refCode).replace(/^https:\/\//, "");
+
+  /* Support link is admin-driven. Stays hidden until a real URL is set, so a
+     blank config never shows a button that goes nowhere. */
+  const supCard = $("#supportCard");
+  if (supCard) {
+    const url = String((CFG.app && CFG.app.supportUrl) || "").trim();
+    // needs a real path — the seeded default is a bare "https://t.me/",
+    // which would render a button that opens nothing
+    const usable = /^https?:\/\/[^\s\/]+\.[^\s\/]+\/\S+/i.test(url);
+    supCard.classList.toggle("hidden", !usable);
+    if (usable) {
+      $("#supportBtn").onclick = () => {
+        if (tg && tg.openTelegramLink && /^https?:\/\/t\.me\//i.test(url)) tg.openTelegramLink(url);
+        else if (tg && tg.openLink) tg.openLink(url);
+        else window.open(url, "_blank");
+      };
+    }
+  }
+
+  // referral copy is driven by the live economy settings
+  const need = Number(CFG.economy.activeAdsRequired || 2);
+  const tierLabel = $("#tierActiveLabel");
+  if (tierLabel) tierLabel.textContent = "Friend watches " + need + " Adsgram ad" + (need === 1 ? "" : "s");
+  const tierReward = $("#tierActiveReward");
+  if (tierReward) tierReward.textContent = "+" + fmt(CFG.economy.inviteActive) + " " + CUR();
+  const tierPct = $("#tierPercent");
+  if (tierPct) tierPct.textContent = "+" + CFG.economy.refPercent + "%";
+  const stepInvite = $("#stepInvite");
+  if (stepInvite) {
+    stepInvite.textContent =
+      "+" + fmt(CFG.economy.inviteActive) + " " + CUR() + " when a friend watches " +
+      need + " Adsgram ads in Earn › Ads · +" + CFG.economy.refPercent + "% forever";
+  }
+
+  renderFriends();
+  renderWithdrawCooldown();
+  renderAdProgress();
+  renderDailyBonus();
+  renderWithdrawLock();
+  renderHistory();
+}
+
+/* t.me/<bot>/<shortName>?startapp=<code> opens the Mini App straight away.
+   Without the short name Telegram lands the user in the bot chat first, so
+   they have to tap again — and the referral is often lost on the way.
+   ?startapp= is still what carries the code; dropping it would break
+   attribution entirely. */
+/* Renders the invite list. Progress is measured in Adsgram-from-Earn views —
+   the same count that actually activates a referral — so the bar can never
+   promise a payout the server would refuse. */
+function renderFriends() {
+  const wrap = $("#friendsList");
+  if (!wrap || !ME || !CFG) return;
+  const list = ME.referrals || [];
+  const need = Number(CFG.economy.activeAdsRequired || 2);
+
+  if (!list.length) {
+    wrap.innerHTML =
+      '<div class="empty-state" id="friendsEmpty">' +
+      '<b>No friends yet</b><span>Share your link — your friends will appear here</span></div>';
+    return;
+  }
+
+  wrap.innerHTML = list.map((f) => {
+    const done = Math.min(Number(f.ads) || 0, need);
+    const pct = need > 0 ? Math.round((done / need) * 100) : 0;
+    const label = f.active
+      ? "Active"
+      : done === 0 ? "Joined · 0 ads" : done + "/" + need + " ads";
+    return (
+      '<div class="friend-row' + (f.active ? " active" : "") + '">' +
+        '<div class="friend-av">' + esc(f.name.slice(0, 1).toUpperCase()) + '</div>' +
+        '<div class="friend-mid">' +
+          '<div class="friend-top">' +
+            '<span class="friend-name">' + esc(f.name) + '</span>' +
+            '<span class="friend-tag">' + label + '</span>' +
+          '</div>' +
+          '<div class="progress sm"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+      '</div>'
+    );
+  }).join("");
+}
+
+/* Opens the same list as a sheet, for the tappable "Friends invited" tile. */
+function openFriendsSheet() {
+  const body = $("#friendsSheetBody");
+  const wrap = $("#friendsList");
+  if (!body || !wrap) return;
+  renderFriends();
+  body.innerHTML = wrap.innerHTML;
+  $("#friendsModal").classList.remove("hidden");
+  haptic("light");
+}
+
+function refLinkFor(code) {
+  const app = (CFG.app.appShortName || "").replace(/^\/|\/$/g, "");
+  const base = "https://t.me/" + CFG.app.botUsername + (app ? "/" + app : "");
+  return base + "?startapp=" + code;
+}
+
+/* ---------------- ads ---------------- */
+/* one card per enabled ad network */
+const AD_NETWORKS = [
+  {
+    id: "adsgram", name: "Adsgram", tile: "blue",
+    icon: '<svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4.5" width="19" height="15" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="m10 9.5 4.5 2.5L10 14.5v-5Z" fill="currentColor"/></svg>',
+  },
+  {
+    id: "monetag", name: "Monetag", tile: "violet",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-6-4 14-6.5-3.5L3 11Z"/><path d="M10.5 15.5V19a1 1 0 0 0 1.8.6l1.7-2.2"/></svg>',
+  },
+];
+
+function enabledNetworks() {
+  const a = CFG.ads || {};
+  return AD_NETWORKS.filter((n) => (n.id === "adsgram" ? a.adsgramEnabled : a.monetagEnabled));
+}
+
+function networkReward(id) {
+  const a = CFG.ads || {};
+  return Number((id === "adsgram" ? a.adsgramReward : a.monetagReward) || CFG.economy.adReward);
+}
+
+/* Build the network rows ONCE. Rebuilding innerHTML on the cooldown tick
+   made the cards visibly flicker. */
+function buildAdNetworks() {
+  const wrap = $("#adNetworkItems");
+  if (!wrap || !CFG) return;
+  const nets = enabledNetworks();
+  const signature = nets.map((n) => n.id + ":" + networkReward(n.id)).join(",") + "|" + CUR();
+  if (wrap.dataset.sig === signature) return;   // nothing structural changed
+  wrap.dataset.sig = signature;
+
+  if (!nets.length) {
+    wrap.innerHTML = '<div class="empty-state"><b>No ads right now</b><span>Check back a little later</span></div>';
+    return;
+  }
+
+  wrap.innerHTML = nets.map((n) => `
+    <div class="task ad-net" data-net="${n.id}">
+      <div class="icon-tile ${n.tile}">${n.icon}</div>
+      <div class="task-info">
+        <div class="task-title">${n.name} <span class="net-count" data-count="${n.id}"></span></div>
+        <div class="task-reward">${TON_SVG}+${fmt(networkReward(n.id))} ${CUR()}</div>
+      </div>
+      <button class="btn small"></button>
+    </div>`).join("");
+
+  wrap.querySelectorAll(".ad-net").forEach((row) => {
+    const b = row.querySelector("button");
+    b.onclick = () => watchPayingAd(row.dataset.net, b);
+  });
+}
+
+/* Cheap per-tick pass: only touch the label/disabled state. */
+function updateAdNetworkButtons() {
+  const wrap = $("#adNetworkItems");
+  if (!wrap || !ME || !CFG) return;
+  const cd = cooldownLeftMs("earn");
+  const counters = ME.adCounters || {};
+
+  wrap.querySelectorAll(".ad-net").forEach((row) => {
+    const id = row.dataset.net;
+    const btn = row.querySelector("button");
+    const c = counters[id] || { used: 0, cap: 0 };
+    const left = c.cap > 0 ? Math.max(0, c.cap - c.used) : Infinity;
+
+    // each network shows its own remaining quota, e.g. "5/8"
+    const tag = row.querySelector('[data-count="' + id + '"]');
+    if (tag) {
+      const txt = c.cap > 0 ? left + "/" + c.cap : "";
+      if (tag.textContent !== txt) tag.textContent = txt;
+      tag.classList.toggle("out", left <= 0);
+    }
+
+    const label = left <= 0 ? "Tomorrow" : cd > 0 ? Math.ceil(cd / 1000) + "s" : "Watch";
+    if (btn.textContent !== label) btn.textContent = label;   // avoid needless repaints
+    btn.disabled = left <= 0 || cd > 0;
+    btn.classList.toggle("done", left <= 0);
+  });
+}
+
+/* The header counter is the sum of the two network quotas shown right below
+   it (8 Adsgram + 6 Monetag = 14). It deliberately does NOT use adsToday: that
+   column also moves for ads watched elsewhere, so the two would disagree on
+   the same screen. */
+/* A completed session ticks its network's counter locally so the badge moves
+   without waiting for the next /me. Task claims land here too — they spend
+   from the same rewarded pool as the Ads tab. */
+const UNIT_COUNTER = { rewarded: "adsgram", monetag: "monetag" };
+function bumpAdCounter(unit) {
+  const id = UNIT_COUNTER[unit];
+  if (!id || !ME || !ME.adCounters || !ME.adCounters[id]) return;
+  ME.adCounters[id].used++;
+  if ($("#page-earn").classList.contains("active")) renderAdProgress();
+}
+
+function adDayTotals() {
+  const c = (ME && ME.adCounters) || {};
+  let used = 0, cap = 0;
+  for (const id of ["adsgram", "monetag"]) {
+    if (!c[id]) continue;
+    used += Number(c[id].used) || 0;
+    cap += Number(c[id].cap) || 0;
+  }
+  return { used: Math.min(used, cap || used), cap };
+}
+
+function renderAdProgress() {
+  if (!ME || !CFG) return;
+  const { used, cap } = adDayTotals();
+  $("#adCount").textContent = used;
+  $("#adCap").textContent = cap;
+  $("#adProgress").style.width = (cap > 0 ? Math.min(100, (used / cap) * 100) : 0) + "%";
+  $("#adCardSub").textContent = cap > 0
+    ? used + " of " + cap + " watched today · resets daily"
+    : "Rewarded ads · resets daily";
+  buildAdNetworks();
+  updateAdNetworkButtons();
+}
+
+/* Poll unconditionally — a cooldown started after this timer was set up must
+   still count down without waiting for some other event to force a redraw.
+   Only the button labels move here; the cards themselves are never rebuilt. */
+setInterval(() => {
+  if (ME && CFG && $("#page-earn").classList.contains("active")) updateAdNetworkButtons();
+}, 500);
+
+/* ---------------- daily bonus ---------------- */
+function renderDailyBonus() {
+  const sub = $("#dailyBonusSub");
+  if (sub) sub.textContent = "Come back every day · +" + fmt(CFG.economy.dailyBonus) + " " + CUR();
+  const btn = $("#dailyBonusBtn");
+  if (ME.dailyBonusClaimed) {
+    btn.textContent = "Claimed ✓";
+    btn.classList.add("done");
+    btn.disabled = true;
+  } else {
+    btn.textContent = "Claim";
+    btn.classList.remove("done");
+    btn.disabled = false;
+  }
+}
+
+$("#dailyBonusBtn").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  guard(btn, async () => {
+    // the bonus is gated behind a watched + clicked interstitial
+    const adNonce = await watchAdFor("bonus", btn);
+    if (!adNonce) return;
+    const r = await api("/bonus/claim", { adNonce });
+    ME.dailyBonusClaimed = true;
+    setBalance(r.balance);
+    renderDailyBonus();
+    floatFromEl(btn, "+" + r.reward + " " + CUR());
+    toast("Daily bonus claimed · +" + fmt(r.reward) + " " + CUR());
+    haptic("success");
+  });
+});
+
+/* ---------------- redeem ---------------- */
+$("#redeemOpenBtn").addEventListener("click", () => {
+  $("#redeemInput").value = "";
+  $("#redeemModal").classList.remove("hidden");
+  haptic("light");
+});
+$("#redeemCancelBtn").addEventListener("click", () => $("#redeemModal").classList.add("hidden"));
+$("#redeemModal").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.add("hidden");
+});
+$("#redeemSubmitBtn").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  const code = $("#redeemInput").value.trim().toUpperCase();
+  if (!code) { toast("Enter a promo code", "error"); return; }
+  guard(btn, async () => {
+    const r = await api("/promo/redeem", { code });
+    setBalance(r.balance);
+    $("#redeemModal").classList.add("hidden");
+    toast("Code redeemed · +" + fmt(r.reward) + " " + CUR());
+    haptic("success");
+  });
+});
+
+/* ---------------- tasks ---------------- */
+const TASK_GROUP_TILE = { telegram: "blue", partners: "green", ads: "violet" };
+
+function renderTasks() {
+  // the Ads tab is network cards only — admin tasks live in Telegram/Partners
+  const wraps = { telegram: $("#tgTaskItems"), partners: $("#partnerTaskItems") };
+  for (const k of Object.keys(wraps)) wraps[k].innerHTML = "";
+
+  for (const task of TASKS) {
+    const wrap = wraps[task.group];
+    if (!wrap) continue;
+    const el = document.createElement("div");
+    el.className = "task";
+    // admin-supplied artwork wins; otherwise fall back to the icon tile
+    const art = task.image
+      ? '<div class="icon-tile img"><img src="' + encodeURI(task.image) + '" alt="" loading="lazy"></div>'
+      : '<div class="icon-tile ' + TASK_GROUP_TILE[task.group] + '">' + (TASK_ICONS[task.icon] || TASK_ICONS.tg) + "</div>";
+    el.innerHTML =
+      art +
+      '<div class="task-info"><div class="task-title"></div>' +
+      '<div class="task-reward">' + TON_SVG + "+" + fmt(task.reward) + " " + CUR() +
+      (task.mustJoin ? '<span class="task-verified">verified</span>' : "") +
+      "</div></div>" +
+      '<button class="btn small"></button>';
+    el.querySelector(".task-title").textContent = task.title;
+    const img = el.querySelector(".icon-tile.img img");
+    if (img) img.onerror = () => { img.parentElement.className = "icon-tile " + TASK_GROUP_TILE[task.group]; img.parentElement.innerHTML = TASK_ICONS[task.icon] || TASK_ICONS.tg; };
+    const btn = el.querySelector("button");
+
+    if (task.status === "done") {
+      btn.textContent = "Done ✓";
+      btn.classList.add("done");
+      btn.disabled = true;
+    } else if (task.status === "claimable") {
+      btn.textContent = "Claim";
+      btn.onclick = () => claimTask(task, btn);
+    } else {
+      btn.textContent = "Start";
+      btn.onclick = () => startTask(task, btn);
+    }
+    wrap.appendChild(el);
+  }
+}
+
+function openTaskUrl(url) {
+  if (!url) return;
+  try {
+    if (tg && tg.openTelegramLink && /^https?:\/\/t\.me\//i.test(url)) tg.openTelegramLink(url);
+    else if (tg && tg.openLink) tg.openLink(url);
+    else window.open(url, "_blank");
+  } catch { window.open(url, "_blank"); }
+}
+
+function startTask(task, btn) {
+  /* Open the link FIRST, synchronously inside the click. Telegram only honours
+     openTelegramLink while the user gesture is still live, and awaiting the
+     API call first spends that gesture — which is why the link felt delayed or
+     silently did nothing. The task URL is already in the payload, so there is
+     nothing to wait for. */
+  openTaskUrl(task.url);
+
+  guard(btn, async () => {
+    const r = await api("/tasks/" + task.id + "/start", {});
+    // only if the list was stale and the server knows a newer URL
+    if (r.url && r.url !== task.url) openTaskUrl(r.url);
+    // inline countdown on the button itself — no modal, no toast spam
+    btn.classList.add("checking");
+    btn.disabled = true;
+    haptic("light");
+    let left = Math.max(1, Number(r.verifySecs) || 5);
+    btn.innerHTML = '<span class="spinner"></span>' + left + "s";
+    const tick = setInterval(() => {
+      left--;
+      if (left > 0) {
+        btn.innerHTML = '<span class="spinner"></span>' + left + "s";
+      } else {
+        clearInterval(tick);
+        verifyThenOffer(task, btn);
+      }
+    }, 1000);
+  });
+}
+
+/* Countdown finished — check membership before showing Claim, so a user who
+   never joined finds out here instead of after sitting through a reward ad. */
+async function verifyThenOffer(task, btn) {
+  btn.innerHTML = '<span class="spinner"></span>Verifying…';
+  try {
+    const r = await api("/tasks/" + task.id + "/verify", {});
+    if (r.joined === false) {
+      btn.classList.remove("checking");
+      btn.disabled = false;
+      btn.textContent = "Join first";
+      toast("Join the channel, then tap again", "error");
+      task.status = null;
+      renderTasks();
+      return;
+    }
+    if (r.available === false) {
+      btn.classList.remove("checking");
+      btn.disabled = false;
+      btn.textContent = "Unavailable";
+      toast("This task can't be verified right now", "error");
+      return;
+    }
+  } catch {
+    // verification is a convenience — the claim re-checks server-side anyway
+  }
+  btn.classList.remove("checking");
+  btn.disabled = false;
+  task.status = "claimable";
+  renderTasks();
+}
+
+function claimTask(task, btn) {
+  guard(btn, async () => {
+    /* Telegram tasks are gated behind the rewarded unit. Partner tasks are
+       paid by the partner, so they claim straight through with no ad. */
+    let adNonce = null;
+    if (task.requiresAd) {
+      adNonce = await watchAdFor("task", btn);
+      if (!adNonce) return;
+    }
+    const r = await api("/tasks/" + task.id + "/claim", adNonce ? { adNonce } : {});
+    task.status = "done";
+    setBalance(r.balance);
+    renderTasks();
+    floatFromEl(btn, "+" + r.reward + " " + CUR());
+    toast("+" + r.reward + " " + CUR() + " earned");
+    haptic("success");
+  });
+}
+
+/* segmented control */
+// must match the data-seg order in the markup: Telegram, Ads, Partners
+const segLists = [$("#taskListTelegram"), $("#taskListAds"), $("#taskListPartners")];
+document.querySelectorAll(".seg-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const idx = Number(btn.dataset.seg);
+    document.querySelectorAll(".seg-btn").forEach((b) => b.classList.toggle("active", b === btn));
+    $("#segGlider").style.transform = "translateX(" + idx * 100 + "%)";
+    segLists.forEach((l, i) => l.classList.toggle("hidden", i !== idx));
+    haptic("light");
+  });
+});
+
+/* ============================================================
+   AD NETWORKS
+   Adsgram interstitial. The server still issues a nonce and enforces a
+   minimum watch time, so a failed/skipped ad can never be cashed in.
+   ============================================================ */
+const ADSGRAM_SDK = "https://sad.adsgram.ai/js/sad.min.js";
+let sdkPromise = null;
+
+/* Fetch both SDKs during boot. Loading them lazily on the first tap is what
+   made the opening interstitial appear seconds late. Failures are ignored —
+   the on-demand loaders still retry. */
+function preloadAdSdks() {
+  if (!CFG || !CFG.ads) return;
+  if (CFG.ads.adsgramEnabled || CFG.ads.openAdEnabled) {
+    loadAdsgramSdk().catch((e) => console.warn("[ads] adsgram preload:", e.message));
+  }
+  if (CFG.ads.monetagEnabled && CFG.ads.monetagZoneId) {
+    loadMonetagSdk().catch((e) => console.warn("[ads] monetag preload:", e.message));
+  }
+}
+
+function loadAdsgramSdk() {
+  if (window.Adsgram) return Promise.resolve(window.Adsgram);
+  if (sdkPromise) return sdkPromise;
+  sdkPromise = new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = ADSGRAM_SDK;
+    s.async = true;
+    s.onload = () => (window.Adsgram ? resolve(window.Adsgram) : reject(new Error("sdk_missing")));
+    s.onerror = () => reject(new Error("sdk_load_failed"));
+    document.head.appendChild(s);
+    setTimeout(() => reject(new Error("sdk_timeout")), 12000);
+  }).catch((e) => { sdkPromise = null; throw e; });
+  return sdkPromise;
+}
+
+/* ---------------- global ad cooldown ----------------
+   Shared across every network and every ad button. Starts when a session
+   ENDS, whatever the outcome — rapid retries after early closes are exactly
+   the pattern that gets ad blocks flagged. Absolute timestamp so it survives
+   reloads. */
+/* Cooldowns are per SECTION, mirroring the server. Watching an ad in the Ads
+   tab must never block claiming a task — each surface throttles only itself. */
+const COOLDOWN_KEY = (key) => "gd_cd_" + (key || "earn");
+
+function cooldownLeftMs(key) {
+  try {
+    return Math.max(0, (Number(localStorage.getItem(COOLDOWN_KEY(key))) || 0) - Date.now());
+  } catch { return 0; }
+}
+function startCooldown(key) {
+  const secs = (CFG && CFG.ads && Number(CFG.ads.cooldownSecs)) || 30;
+  try { localStorage.setItem(COOLDOWN_KEY(key), String(Date.now() + secs * 1000)); } catch {}
+  if (key === "earn") renderAdProgress();
+}
+/* which cooldown bucket a purpose belongs to (mirrors COOLDOWN_GROUPS) */
+const cdKeyFor = (purpose) =>
+  purpose === "monetag" || purpose === "earn" ? "earn" : purpose;
+
+/* ---------------- Adsgram click detection ----------------
+   The SDK promise resolves when the ad finishes PLAYING — it says nothing
+   about whether the user tapped the CTA. Paying on that alone means we pay
+   out while earning nothing. Three layers decide if a real click happened. */
+
+/* Layer 1 — network: Adsgram's own SDK fires a telemetry request with
+   type=Click only on a genuine CTA tap. Always passes the call through. */
+function interceptAdsgramTelemetry(state) {
+  const original = window.fetch;
+  if (typeof original !== "function") return () => {};
+
+  const patched = function (...args) {
+    try {
+      const input = args[0];
+      const url =
+        typeof input === "string" ? input :
+        input && typeof input.url === "string" ? input.url : "";
+      if (url && /adsgram/i.test(url) && /[?&]type=Click\b/i.test(url)) {
+        // a rewarded unit plays several spots, so count every CTA tap
+        state.networkClick = true;
+        state.clickCount++;
+      }
+    } catch { /* sniffing must never break a real request */ }
+    return original.apply(this, args);
+  };
+
+  window.fetch = patched;
+  // only restore if nobody else patched on top of us in the meantime
+  return () => { if (window.fetch === patched) window.fetch = original; };
+}
+
+/* Layer 2 + 3 — DOM: leaving the app signals a click-through, but only once
+   a real impression has started. A quick return means an accidental blur. */
+function armDomClickWatch(state) {
+  const FAST_RETURN_MS = 800;
+
+  /* blur AND visibilitychange both fire on a single leave, so latch on `away`
+     to count one click per away/return cycle rather than two. */
+  const onLeave = () => {
+    if (!state.impression) return;      // armed only after onStart
+    if (state.away) return;
+    state.away = true;
+    state.domClick = true;
+    state.domClickCount++;
+    state.leftAt = Date.now();
+  };
+  const onReturn = () => {
+    if (!state.away) return;
+    state.away = false;
+    // a genuine click-through keeps them away much longer than a stray blur
+    state.returnedFast = state.leftAt ? Date.now() - state.leftAt < FAST_RETURN_MS : false;
+  };
+  const onVis = () => (document.visibilityState === "hidden" ? onLeave() : onReturn());
+
+  document.addEventListener("visibilitychange", onVis);
+  window.addEventListener("blur", onLeave);
+  window.addEventListener("pagehide", onLeave);
+  window.addEventListener("focus", onReturn);
+
+  return () => {
+    document.removeEventListener("visibilitychange", onVis);
+    window.removeEventListener("blur", onLeave);
+    window.removeEventListener("pagehide", onLeave);
+    window.removeEventListener("focus", onReturn);
+  };
+}
+
+const AD_ERR = { UNAVAILABLE: "ad_unavailable", NOT_CLICKED: "ad_not_clicked" };
+
+/* Resolves only when the required number of genuine CTA clicks was detected.
+   `clicksRequired: 0` means engagement-only — no detection at all. */
+function showAdsgramAd(blockId, clicksRequired) {
+  if (!blockId) return Promise.reject(new Error("no_block_id"));
+  const needClicks = Number(clicksRequired) || 0;
+
+  return loadAdsgramSdk().then((sdk) => new Promise((resolve, reject) => {
+    const state = {
+      impression: false, networkClick: false, domClick: false,
+      clickCount: 0, domClickCount: 0,
+      leftAt: 0, returnedFast: false, away: false,
+    };
+
+    let settled = false;
+    let unhookFetch = () => {};
+    let unhookDom = () => {};
+    const cleanup = () => { try { unhookFetch(); } catch {} try { unhookDom(); } catch {} };
+    const resolveOnce = (v) => { if (settled) return; settled = true; cleanup(); resolve(v); };
+    const rejectOnce = (e) => { if (settled) return; settled = true; cleanup(); reject(e); };
+
+    // A FRESH controller every call. Reusing one after a not-clicked attempt
+    // was observed to double-credit on the immediate retry.
+    let ctl;
+    try {
+      ctl = sdk.init({
+        blockId,
+        userid: ME && ME.tgId ? String(ME.tgId) : undefined,
+        debug: false,
+      });
+    } catch (e) { return rejectOnce(new Error("init_failed")); }
+
+    // detection only matters when clicks are required
+    if (needClicks > 0) {
+      unhookFetch = interceptAdsgramTelemetry(state);
+      unhookDom = armDomClickWatch(state);
+    }
+
+    try {
+      if (ctl.addEventListener) {
+        ctl.addEventListener("onStart", () => { state.impression = true; });
+        ctl.addEventListener("onBannerNotFound", () => rejectOnce(new Error(AD_ERR.UNAVAILABLE)));
+      }
+    } catch {}
+
+    ctl.show().then((res) => {
+      if (res && res.error) return rejectOnce(new Error(res.description || "ad_error"));
+
+      // the SDK may report the impression even if onStart never fired
+      if (res && res.done) state.impression = true;
+
+      if (!state.impression) return rejectOnce(new Error(AD_ERR.UNAVAILABLE));
+
+      // engagement-only: an impression is all we need
+      if (needClicks === 0) return resolveOnce({ ...res, clicks: 0 });
+
+      // fake-click guard: DOM-only signal that bounced straight back
+      if (state.domClick && !state.networkClick && state.returnedFast) {
+        return rejectOnce(new Error(AD_ERR.NOT_CLICKED));
+      }
+      if (!state.networkClick && !state.domClick) {
+        return rejectOnce(new Error(AD_ERR.NOT_CLICKED));
+      }
+
+      /* Multi-spot rewarded units need one CTA tap per spot. The network
+         signal counts exactly; the DOM signal is the fallback when the
+         telemetry gets swallowed inside the Telegram WebView. */
+      const clicks = Math.max(state.clickCount, state.domClickCount);
+      if (clicks < needClicks) {
+        return rejectOnce(Object.assign(new Error(AD_ERR.NOT_CLICKED), {
+          clicks, needClicks,
+        }));
+      }
+      resolveOnce({ ...res, clicks });
+    }).catch((res) => {
+      const desc = (res && (res.description || res.message)) || "ad_error";
+      rejectOnce(new Error(desc));
+    });
+  }));
+}
+
+/* Monetag: trust the SDK promise. Its CTA redirect and promise resolution can
+   fire in either order, so a DOM heuristic would wrongly reject real views. */
+let monetagPromise = null;
+
+/* Monetag defines window.show_<zone> when its SDK loads. It reads data-zone /
+   data-sdk off its own <script> tag, so those must be set BEFORE the tag is
+   appended. We preload at boot rather than on first use — injecting mid-tap
+   left the function undefined for the first ad. */
+function loadMonetagSdk() {
+  const zone = CFG && CFG.ads && CFG.ads.monetagZoneId;
+  if (!zone) return Promise.reject(new Error("no_zone_id"));
+  const sdkName = "show_" + zone;
+  if (typeof window[sdkName] === "function") return Promise.resolve(sdkName);
+  if (monetagPromise) return monetagPromise;
+
+  monetagPromise = new Promise((resolve, reject) => {
+    let src = CFG.ads.monetagSdkUrl || "//libtl.com/sdk.js";
+    if (/^\/\//.test(src)) src = location.protocol + src;      // protocol-relative
+    else if (!/^https?:/i.test(src)) src = "https://" + src.replace(/^\/+/, "");
+
+    const s = document.createElement("script");
+    s.setAttribute("data-zone", String(zone));
+    s.setAttribute("data-sdk", sdkName);
+    s.async = true;
+
+    let done = false;
+    const finish = (fn) => { if (!done) { done = true; fn(); } };
+
+    // the SDK sometimes defines the global slightly after onload fires
+    const waitForGlobal = (tries) => {
+      if (typeof window[sdkName] === "function") return finish(() => resolve(sdkName));
+      if (tries <= 0) return finish(() => reject(new Error("sdk_missing")));
+      setTimeout(() => waitForGlobal(tries - 1), 200);
+    };
+
+    s.onload = () => waitForGlobal(25);              // up to ~5s after load
+    s.onerror = () => finish(() => reject(new Error("sdk_load_failed")));
+    s.src = src;
+    document.head.appendChild(s);
+    setTimeout(() => finish(() => reject(new Error("sdk_timeout"))), 15000);
+  }).catch((e) => { monetagPromise = null; throw e; });
+
+  return monetagPromise;
+}
+
+function showMonetagAd() {
+  return loadMonetagSdk().then((sdkName) => {
+    const fn = window[sdkName];
+    if (typeof fn !== "function") throw new Error(AD_ERR.UNAVAILABLE);
+    /* Monetag rejects with a bare STRING on skip/no-fill, so `err.message`
+       comes back undefined and every failure looked like a generic error.
+       Normalise it into a real Error the caller can classify. */
+    return Promise.resolve(fn()).catch((e) => {
+      const msg = typeof e === "string" ? e : (e && e.message) || "ad_error";
+      console.warn("[monetag] rejected:", msg);
+      throw new Error(
+        /no ?fill|not available|empty|no ads|unavailable/i.test(msg) ? AD_ERR.UNAVAILABLE : msg
+      );
+    });
+  });
+}
+
+/* ---------------- ad modal ---------------- */
+let adTimer = null;
+let adMode = "ad";        // "ad" | "spin" | "game2x"
+let adNonce = null;
+let adStartedAt = 0;
+
+function setAdRewardCopy(mode) {
+  if (mode === "spin") {
+    $("#adRewardTitle").textContent = "+1 Spin";
+    $("#adRewardSub").textContent = "One extra spin on the Lucky Wheel";
+    $("#claimAdBtn").textContent = "Take my spin";
+  } else if (mode === "game2x") {
+    $("#adRewardTitle").textContent = "×2 Reward";
+    $("#adRewardSub").textContent = "Your round reward will be doubled";
+    $("#claimAdBtn").textContent = "Collect";
+  } else {
+    $("#adRewardTitle").textContent = "+" + CFG.economy.adReward + " " + CUR();
+    $("#adRewardSub").textContent = "Reward earned!";
+    $("#claimAdBtn").textContent = "Claim reward";
+  }
+
+}
+
+/* modal panels: loading -> (real ad takes over screen) -> reward */
+function showAdPanel(which) {
+  $("#adModal").classList.remove("hidden");
+  $("#adLoading").style.display = which === "loading" ? "flex" : "none";
+  document.querySelector(".ad-screen").style.display = which === "simulated" ? "flex" : "none";
+  $("#adReward").classList.toggle("hidden", which !== "reward");
+}
+
+/* The built-in house ad. Used when a network reports no fill, so a missing
+   sponsor never blocks a reward the user genuinely earned.
+   Resolves when the countdown finishes. */
+function runSimulatedAd(duration) {
+  return new Promise((resolve) => {
+    showAdPanel("simulated");
+    const ring = $("#adRing");
+    const secondsEl = $("#adSeconds");
+    let remaining = Math.max(3, Number(duration) || 5);
+    secondsEl.textContent = remaining;
+    const circumference = 119.4;
+    ring.style.transition = "none";
+    ring.style.strokeDashoffset = 0;
+    void ring.getBoundingClientRect();
+    ring.style.transition = "stroke-dashoffset 1s linear";
+
+    clearInterval(adTimer);
+    const total = remaining;
+    adTimer = setInterval(() => {
+      remaining--;
+      if (remaining >= 0) {
+        secondsEl.textContent = remaining;
+        ring.style.strokeDashoffset = circumference * (1 - remaining / total);
+      }
+      if (remaining <= 0) {
+        clearInterval(adTimer);
+        adTimer = null;
+        haptic("success");
+        resolve();
+      }
+    }, 1000);
+  });
+}
+
+/* Network failures that mean "no ad to show" rather than "user didn't click".
+   Only these fall back to the house ad — a detected non-click must never be
+   rescued, or the anti-fraud check would be pointless. */
+const NO_FILL = new Set([
+  AD_ERR.UNAVAILABLE, "sdk_load_failed", "sdk_timeout", "sdk_missing",
+  "no_block_id", "no_zone_id", "init_failed", "ad_error",
+]);
+
+/* the "you didn't tap the banner" explainer. One button by design — an
+   in-popup retry would be a second path to the same reward that skips the
+   daily-limit and cooldown checks. */
+/* Deliberately says nothing about how many taps were detected. Quoting a
+   count ("we counted 1 of 3") reads as an accusation and tells someone
+   probing the system exactly how close they got — one clear instruction is
+   both friendlier and gives away nothing. */
+function showNoClickPopup() {
+  const txt = $("#noClickText");
+  if (txt) {
+    txt.innerHTML =
+      "Your reward wasn't counted.<br><br>" +
+      "You need to <b>tap all the blue banners</b> inside the ad. " +
+      "Just letting it play isn't enough.<br><br>" +
+      "Please try again.";
+  }
+  $("#noClickModal").classList.remove("hidden");
+  haptic("error");
+}
+/* Friends sheet: the stat tile and the section heading both open it. */
+(function wireFriendsSheet() {
+  const close = () => $("#friendsModal").classList.add("hidden");
+  const closeBtn = $("#friendsClose");
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  const modal = $("#friendsModal");
+  if (modal) modal.addEventListener("click", (e) => { if (e.target === e.currentTarget) close(); });
+
+  const tile = $("#invStatCount") && $("#invStatCount").closest(".stat");
+  if (tile) tile.addEventListener("click", openFriendsSheet);
+  const list = $("#friendsList");
+  if (list) list.addEventListener("click", () => { if ((ME && ME.referrals || []).length) openFriendsSheet(); });
+})();
+
+$("#noClickOk").addEventListener("click", () => $("#noClickModal").classList.add("hidden"));
+$("#noClickModal").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.add("hidden");
+});
+
+/* ============================================================
+   Runs one ad session end to end.
+   The SERVER decides the block id, the minimum watch time and how many CTA
+   clicks are needed, all pinned to the returned nonce.
+   Resolves with the nonce (proof) or throws.
+   ============================================================ */
+async function runAdSession(purpose, opts = {}) {
+  const started = await api("/ads/start", { purpose });
+  const nonce = started.nonce;
+  const startedAt = Date.now();
+  const minWatch = Number(started.minWatch) || 0;
+  const clicks = Number(started.clicksRequired) || 0;
+  const provider = started.provider;
+
+  const cdKey = started.cooldownKey || cdKeyFor(purpose);
+  /* The network's own ad covers the screen, so our loading panel is only
+     needed for the house ad. Everything else reports progress on the button
+     that was tapped — no full-screen popup. */
+  let usedHouseAd = false;
+
+  try {
+    try {
+      if (provider === "monetag") await showMonetagAd();
+      else await showAdsgramAd(started.blockId, clicks);
+      console.info("[ads] ok", purpose, provider, started.blockId);
+    } catch (err) {
+      const code = (err && err.message) || "ad_error";
+      // no sponsor available -> house ad, so the user isn't punished for it.
+      // a detected non-click still propagates and blocks the reward.
+      if (!(CFG.ads.fallbackToSimulated && NO_FILL.has(code))) throw err;
+      console.warn("[ads] no fill for", purpose, provider, "->", code, "- house ad");
+      usedHouseAd = true;
+      await runSimulatedAd(minWatch || 5);
+    }
+
+    // hold until the server's minimum has genuinely elapsed
+    const waited = (Date.now() - startedAt) / 1000;
+    if (waited < minWatch) {
+      await new Promise((r) => setTimeout(r, (minWatch - waited) * 1000 + 300));
+    }
+    await api("/ads/complete", { nonce });
+    bumpAdCounter(started.unit);
+    return nonce;
+  } finally {
+    // the countdown starts when the ad session ENDS, i.e. once the user is
+    // back in the app — same rule everywhere
+    if (purpose !== "open") startCooldown(cdKey);
+    if (usedHouseAd) $("#adModal").classList.add("hidden");
+  }
+}
+
+/* Shows progress on the button itself instead of a modal, and restores it
+   afterwards. */
+function buttonBusy(btn, label) {
+  if (!btn) return () => {};
+  const html = btn.innerHTML;
+  const wasDisabled = btn.disabled;
+  btn.disabled = true;
+  btn.classList.add("busy");
+  btn.innerHTML = '<span class="spinner"></span>' + (label || "Processing…");
+  return () => {
+    btn.innerHTML = html;
+    btn.disabled = wasDisabled;
+    btn.classList.remove("busy");
+  };
+}
+
+/* Wraps runAdSession with the shared error UX. Returns the nonce or null.
+   `btn` gets an inline processing state — no full-screen popup. */
+async function watchAdFor(purpose, btn) {
+  const cdKey = cdKeyFor(purpose);
+  const left = cooldownLeftMs(cdKey);
+  if (left > 0) {
+    toast("Please wait " + Math.ceil(left / 1000) + "s", "error");
+    haptic("error");
+    return null;
+  }
+  const restore = buttonBusy(btn, "Opening ad…");
+  try {
+    haptic("medium");
+    const nonce = await runAdSession(purpose);
+    restore();
+    return nonce;
+  } catch (err) {
+    restore();
+    const code = (err && (err.code || err.message)) || "ad_error";
+    console.warn("[ads]", purpose, code);
+    $("#adModal").classList.add("hidden");
+    if (code === AD_ERR.NOT_CLICKED) showNoClickPopup();
+    else if (code === "join_required") showJoinGate((err.data && err.data.channels) || []);
+    else if (code === "ad_unit_not_configured") toast("This ad unit isn't set up yet", "error");
+    else toast(humanError(code) || "No ads available right now", "error");
+    haptic("error");
+    return null;
+  }
+}
+
+/* the "Watch Ad" buttons in Earn > Ads — these pay GD directly */
+async function watchPayingAd(netId, btn) {
+  const purpose = netId === "monetag" ? "monetag" : "earn";
+  const left = cooldownLeftMs("earn");
+  if (left > 0) {
+    toast("Please wait " + Math.ceil(left / 1000) + "s", "error");
+    haptic("error");
+    return;
+  }
+  const restore = buttonBusy(btn, "Opening…");
+  // only stamp a cooldown once a session actually opened — being refused at
+  // /ads/start (daily limit, server cooldown) must not compound another 30s
+  let sessionOpened = false;
+  try {
+    haptic("medium");
+    const started = await api("/ads/start", { purpose });
+    sessionOpened = true;
+    const startedAt = Date.now();
+    const minWatch = Number(started.minWatch) || 0;
+
+    $("#adLoadSub").textContent = "Powered by " + (started.provider === "monetag" ? "Monetag" : "Adsgram");
+    showAdPanel("loading");
+
+    try {
+      if (started.provider === "monetag") await showMonetagAd();
+      else await showAdsgramAd(started.blockId, Number(started.clicksRequired) || 0);
+    } catch (err) {
+      const code = (err && err.message) || "ad_error";
+      if (!(CFG.ads.fallbackToSimulated && NO_FILL.has(code))) throw err;
+      console.warn("[ads] no fill for", purpose, "->", code, "- house ad");
+      await runSimulatedAd(Number(started.minWatch) || 5);
+    }
+
+    const waited = (Date.now() - startedAt) / 1000;
+    if (waited < minWatch) await new Promise((r) => setTimeout(r, (minWatch - waited) * 1000 + 300));
+
+    const r = await api("/ads/complete", { nonce: started.nonce });
+    $("#adModal").classList.add("hidden");
+    ME.adsToday = r.adsToday;
+    ME.adsTotal = r.adsTotal;
+    // tick this network's own daily counter so the badge updates immediately
+    bumpAdCounter(netId === "monetag" ? "monetag" : "rewarded");
+    setBalance(r.balance);
+    renderAdProgress();
+    renderWithdrawLock();
+    toast("+" + fmt(r.reward) + " " + CUR() + " added to balance");
+    haptic("success");
+  } catch (err) {
+    const code = (err && (err.code || err.message)) || "ad_error";
+    console.warn("[ads]", purpose, code);
+    $("#adModal").classList.add("hidden");
+    if (code === AD_ERR.NOT_CLICKED) showNoClickPopup();
+    else if (code === "join_required") showJoinGate((err.data && err.data.channels) || []);
+    else toast(humanError(code) || "No ads available right now", "error");
+    haptic("error");
+  } finally {
+    restore();
+    if (sessionOpened) startCooldown("earn");
+  }
+}
+
+/* ============================================================
+   ARCADE
+   Gameplay runs locally; start/finish are server-verified.
+   ============================================================ */
+const GAME_META = {
+  catch: { name: "Coin Catch", timed: true },
+  merge: { name: "Merge 2048", timed: false },
+  flappy: { name: "Flappy Coin", timed: false },
+  whack: { name: "Gem Rush", timed: true },
+};
+
+let activeGame = null;
+let currentGameId = null;
+let gameNonce = null;
+let pendingSessionId = null;
+
+const setGameScore = (v) => ($("#gameScore").textContent = v);
+const setGameTimer = (v) => ($("#gameTimer").textContent = v);
+
+async function openGame(id) {
+  let started;
+  try {
+    started = await api("/games/start", { game: id });
+  } catch (e) {
+    if (e.code === "pending_claim") {
+      // an unclaimed win blocks the next round
+      ME.pendingClaim = (e.data && e.data.pending) || ME.pendingClaim;
+      renderPendingClaim();
+      toast("Claim your pending win first", "error");
+      switchPage("farm");
+      $("#pendingClaim").classList.remove("hidden");
+      $("#pendingClaim").scrollIntoView({ behavior: "smooth", block: "center" });
+    } else if (e.code === "game_limit") {
+      toast("Daily limit reached for this game — back tomorrow", "error");
+      if (ME.playsLeft) ME.playsLeft[id] = 0;
+      renderPlayCounts();
+    } else if (e.code === "join_required") {
+      showJoinGate((e.data && e.data.channels) || []);
+      return;
+    } else toast(humanError(e.code), "error");
+    haptic("error");
+    return;
+  }
+  gameNonce = started.nonce;
+  if (ME.playsLeft) ME.playsLeft[id] = started.playsLeft;
+  renderPlayCounts();
+  currentGameId = id;
+  $("#gameTitle").textContent = GAME_META[id].name;
+  setGameScore(0);
+  $("#gameTimerChip").style.display = GAME_META[id].timed ? "" : "none";
+  const stage = $("#gameStage");
+  stage.innerHTML = "";
+  stage.className = "game-stage stage-" + id;
+  $("#gameOverlay").classList.remove("hidden");
+  activeGame = GAME_STARTERS[id](stage);
+  haptic("medium");
+}
+
+function stopActiveGame() {
+  if (activeGame && activeGame.stop) activeGame.stop();
+  activeGame = null;
+}
+
+function closeGame() {
+  stopActiveGame();
+  gameNonce = null;
+  $("#gameOverlay").classList.add("hidden");
+}
+$("#gameClose").addEventListener("click", closeGame);
+
+async function finishGame(score) {
+  stopActiveGame();
+  $("#gameOverlay").classList.add("hidden");
+  if (!gameNonce) return;
+  try {
+    const r = await api("/games/finish", { nonce: gameNonce, score });
+    gameNonce = null;
+    // the win is PENDING — it only pays once the claim ad has been watched
+    ME.pendingClaim = { sessionId: r.sessionId, game: currentGameId, reward: r.reward };
+    renderPendingClaim();
+    $("#geScore").textContent = score;
+    $("#geReward").textContent = fmt(r.reward);
+    $("#gameEndModal").classList.remove("hidden");
+    haptic("success");
+  } catch (e) {
+    toast(humanError(e.code), "error");
+  }
+}
+
+/* ---------------- pending claim ----------------
+   A finished round holds its reward until the user watches the claim ad.
+   A failed/skipped attempt starts a 30s cooldown so the ad network isn't
+   hammered by repeated opens. */
+const CLAIM_CD_KEY = "gd_claim_cooldown_until";
+const claimCdLeft = () => {
+  try { return Math.max(0, (Number(localStorage.getItem(CLAIM_CD_KEY)) || 0) - Date.now()); }
+  catch { return 0; }
+};
+function startClaimCooldown() {
+  const secs = (CFG && CFG.ads && Number(CFG.ads.claimCooldownSecs)) || 30;
+  try { localStorage.setItem(CLAIM_CD_KEY, String(Date.now() + secs * 1000)); } catch {}
+}
+
+function renderPendingClaim() {
+  const card = $("#pendingClaim");
+  if (!card || !CFG) return;
+  const p = ME && ME.pendingClaim;
+  card.classList.toggle("hidden", !p);
+  if (!p) return;
+  $("#pcAmount").textContent = fmt(p.reward);
+  updatePendingClaimBtn();
+}
+
+function updatePendingClaimBtn() {
+  const p = ME && ME.pendingClaim;
+  if (!p) return;
+  const btn = $("#pcClaimBtn");
+  const cd = claimCdLeft();
+  if (cd > 0) {
+    btn.disabled = true;
+    btn.textContent = Math.ceil(cd / 1000) + "s";
+    $("#pcNote").textContent = "You can try again in a moment";
+  } else {
+    btn.disabled = false;
+    btn.textContent = "Claim";
+    $("#pcNote").textContent = "Watch a short ad to collect";
+  }
+}
+
+$("#pcClaimBtn").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  const p = ME && ME.pendingClaim;
+  if (!p || claimCdLeft() > 0) return;
+  guard(btn, async () => {
+    const adNonce = await watchAdFor("game", btn);
+    if (!adNonce) { startClaimCooldown(); updatePendingClaimBtn(); return; }
+    const r = await api("/games/claim", { sessionId: p.sessionId, adNonce });
+    ME.pendingClaim = null;
+    setBalance(r.balance);
+    renderPendingClaim();
+    renderPlayCounts();
+    floatFromEl(btn, "+" + fmt(r.reward) + " " + CUR());
+    toast("+" + fmt(r.reward) + " " + CUR() + " collected");
+    haptic("success");
+  });
+});
+
+/* keep the claim countdown ticking while the Games tab is open */
+setInterval(() => {
+  if (ME && ME.pendingClaim && $("#page-farm").classList.contains("active")) updatePendingClaimBtn();
+}, 500);
+
+/* round-over sheet: the only way out is the claim ad */
+$("#geCollect2x").addEventListener("click", () => {
+  $("#gameEndModal").classList.add("hidden");
+  $("#pcClaimBtn").click();
+});
+$("#geCollect").addEventListener("click", () => {
+  $("#gameEndModal").classList.add("hidden");
+  toast("Claim it from the card above when you're ready");
+});
+$("#gameEndModal").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.add("hidden");
+});
+
+/* per-game max payout label, driven by the live settings */
+function renderGameMaxes() {
+  if (!CFG) return;
+  const caps = {
+    catch: CFG.games.maxRewardCatch, merge: CFG.games.maxRewardMerge,
+    flappy: CFG.games.maxRewardFlappy, whack: CFG.games.maxRewardWhack,
+  };
+  document.querySelectorAll("[data-max]").forEach((el) => {
+    const cap = caps[el.dataset.max];
+    if (cap !== undefined) el.textContent = "up to " + fmt(cap) + " " + CUR();
+  });
+  $("#gpBalance").textContent = fmt(ME ? ME.balance : 0);
+}
+
+/* "2/3 left today" badge on each game card */
+function renderPlayCounts() {
+  const per = (CFG && CFG.games.dailyPlaysPerGame) || 3;
+  document.querySelectorAll(".game-card").forEach((card) => {
+    const g = card.dataset.game;
+    const left = ME && ME.playsLeft ? ME.playsLeft[g] : per;
+    let tag = card.querySelector(".g-plays");
+    if (!tag) {
+      tag = document.createElement("u");
+      tag.className = "g-plays";
+      card.appendChild(tag);
+    }
+    tag.textContent = left > 0 ? left + "/" + per + " left today" : "Back tomorrow";
+    tag.classList.toggle("out", left <= 0);
+    card.classList.toggle("depleted", left <= 0);
+  });
+}
+
+document.querySelectorAll(".game-card").forEach((card) => {
+  card.addEventListener("click", () => openGame(card.dataset.game));
+});
+
+/* ---------- 1. Coin Catch ---------- */
+function startCatch(stage) {
+  let score = 0, time = 30, run = true, raf = null;
+  setGameTimer(time);
+  stage.innerHTML = '<div class="gc-basket"><div class="gb-cup"><svg><use href="#ic-ton"/></svg></div></div>';
+  const basket = stage.querySelector(".gc-basket");
+  let bx = stage.clientWidth / 2;
+  const place = () => (basket.style.left = bx + "px");
+  place();
+
+  const moveTo = (clientX) => {
+    const r = stage.getBoundingClientRect();
+    bx = Math.max(28, Math.min(r.width - 28, clientX - r.left));
+    place();
+  };
+  const onPointer = (e) => moveTo(e.clientX);
+  const onTouch = (e) => { if (e.touches[0]) moveTo(e.touches[0].clientX); };
+  stage.addEventListener("pointermove", onPointer);
+  stage.addEventListener("touchmove", onTouch, { passive: true });
+
+  const items = [];
+  const spawn = setInterval(() => {
+    if (!run) return;
+    const r = Math.random();
+    const kind = r < 0.15 ? "bomb" : r < 0.3 ? "gem" : "coin";
+    const el = document.createElement("div");
+    el.className = "gc-item";
+    if (kind === "coin") el.innerHTML = '<svg class="gc-svg"><use href="#ic-ton"/></svg>';
+    else el.textContent = kind === "bomb" ? "💣" : "💎";
+    const x = 20 + Math.random() * (stage.clientWidth - 40);
+    el.style.left = x + "px";
+    stage.appendChild(el);
+    items.push({ el, x, y: -30, v: 2.4 + Math.random() * 2.2, kind });
+  }, 520);
+
+  const timer = setInterval(() => {
+    if (!run) return;
+    time--;
+    setGameTimer(time);
+    if (time <= 0) { run = false; finishGame(score); }
+  }, 1000);
+
+  const loop = () => {
+    if (!run) return;
+    const h = stage.clientHeight;
+    for (let i = items.length - 1; i >= 0; i--) {
+      const it = items[i];
+      it.y += it.v;
+      it.el.style.transform = "translateY(" + it.y + "px)";
+      if (it.y > h - 74 && it.y < h - 30 && Math.abs(it.x - bx) < 36) {
+        if (it.kind === "coin") { score += 10; floatFromEl(it.el, "+10", "gp"); }
+        else if (it.kind === "gem") { score += 25; floatFromEl(it.el, "+25", "lucky"); }
+        else {
+          score = Math.max(0, score - 20);
+          stage.classList.add("flash");
+          setTimeout(() => stage.classList.remove("flash"), 250);
+          haptic("error");
+        }
+        setGameScore(score);
+        it.el.remove();
+        items.splice(i, 1);
+      } else if (it.y > h) {
+        it.el.remove();
+        items.splice(i, 1);
+      }
+    }
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
+
+  return {
+    stop() {
+      run = false;
+      clearInterval(spawn); clearInterval(timer);
+      if (raf) cancelAnimationFrame(raf);
+      stage.removeEventListener("pointermove", onPointer);
+      stage.removeEventListener("touchmove", onTouch);
+    },
+  };
+}
+
+/* ---------- 2. Merge 2048 ---------- */
+function startMerge(stage) {
+  let grid = Array(16).fill(0);
+  let score = 0;
+  stage.innerHTML =
+    '<div class="m48-wrap"><div class="m48-grid"></div>' +
+    '<button class="btn primary m48-done">Finish &amp; collect</button>' +
+    '<div class="m48-hint">Swipe to merge tiles</div></div>';
+  const gridEl = stage.querySelector(".m48-grid");
+  for (let i = 0; i < 16; i++) gridEl.appendChild(document.createElement("div"));
+  const cells = [...gridEl.children];
+
+  const render = () => {
+    grid.forEach((v, i) => {
+      cells[i].textContent = v || "";
+      cells[i].className = v ? "t t" + Math.min(v, 2048) : "";
+    });
+    setGameScore(score);
+  };
+  const free = () => grid.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+  const add = () => {
+    const f = free();
+    if (f.length) grid[f[Math.floor(Math.random() * f.length)]] = Math.random() < 0.9 ? 2 : 4;
+  };
+  const canMove = () => {
+    if (free().length) return true;
+    for (let r = 0; r < 4; r++)
+      for (let c = 0; c < 4; c++) {
+        const v = grid[r * 4 + c];
+        if (c < 3 && grid[r * 4 + c + 1] === v) return true;
+        if (r < 3 && grid[(r + 1) * 4 + c] === v) return true;
+      }
+    return false;
+  };
+  const slide = (row) => {
+    let arr = row.filter((v) => v);
+    for (let i = 0; i < arr.length - 1; i++) {
+      if (arr[i] === arr[i + 1]) { arr[i] *= 2; score += arr[i]; arr.splice(i + 1, 1); }
+    }
+    while (arr.length < 4) arr.push(0);
+    return arr;
+  };
+  const move = (dir) => {
+    const before = grid.join();
+    for (let r = 0; r < 4; r++) {
+      let row;
+      if (dir < 2) {
+        row = grid.slice(r * 4, r * 4 + 4);
+        if (dir === 1) row.reverse();
+        row = slide(row);
+        if (dir === 1) row.reverse();
+        for (let c = 0; c < 4; c++) grid[r * 4 + c] = row[c];
+      } else {
+        row = [grid[r], grid[r + 4], grid[r + 8], grid[r + 12]];
+        if (dir === 3) row.reverse();
+        row = slide(row);
+        if (dir === 3) row.reverse();
+        grid[r] = row[0]; grid[r + 4] = row[1]; grid[r + 8] = row[2]; grid[r + 12] = row[3];
+      }
+    }
+    if (grid.join() !== before) {
+      add(); render(); haptic("light");
+      if (!canMove()) setTimeout(() => finishGame(score), 350);
+    }
+  };
+
+  let sx = 0, sy = 0;
+  const onStart = (e) => { const t = e.touches ? e.touches[0] : e; sx = t.clientX; sy = t.clientY; };
+  const onEnd = (e) => {
+    const t = e.changedTouches ? e.changedTouches[0] : e;
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < 24) return;
+    if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 1 : 0);
+    else move(dy > 0 ? 3 : 2);
+  };
+  const onKey = (e) => {
+    const map = { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3 };
+    if (map[e.key] !== undefined) { e.preventDefault(); move(map[e.key]); }
+  };
+  stage.addEventListener("touchstart", onStart, { passive: true });
+  stage.addEventListener("touchend", onEnd);
+  stage.addEventListener("pointerdown", onStart);
+  stage.addEventListener("pointerup", onEnd);
+  window.addEventListener("keydown", onKey);
+  stage.querySelector(".m48-done").addEventListener("click", () => finishGame(score));
+
+  add(); add(); render();
+  return { stop() { window.removeEventListener("keydown", onKey); } };
+}
+
+/* ---------- 3. Flappy Coin ---------- */
+const COIN_IMG = new Image();
+COIN_IMG.src = "data:image/svg+xml;base64," + btoa(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">' +
+  '<path d="M256 40C375.3 40 472 136.7 472 256C472 375.3 375.3 472 256 472C136.7 472 40 375.3 40 256C40 136.7 136.7 40 256 40Z" fill="#30a1f5"/>' +
+  '<path d="M301 155.6C271 155.6 241 155.6 211 155.6C199.1 155.6 193.1 155.6 187.6 157.2C186.47 157.6 185.3 158.03 184.1 158.5C182.97 159.03 181.83 159.6 180.7 160.2C179.63 160.8 178.57 161.43 177.5 162.1C176.5 162.83 175.53 163.6 174.6 164.4C170.2 168 167 173.1 160.5 183.1C150.97 197.93 141.43 212.77 131.9 227.6C127.6 234.3 125.5 237.6 124.9 241.1C124.4 244.2 124.7 247.4 125.9 250.3C127.2 253.6 130 256.4 135.6 262C171 297.4 206.4 332.8 241.8 368.2C246.8 373.2 249.3 375.6 252.1 376.6C254.6 377.4 257.4 377.4 259.9 376.6C262.7 375.6 265.2 373.2 270.2 368.2C305.6 332.8 341 297.4 376.4 262C382 256.4 384.8 253.6 386.1 250.3C386.37 249.57 386.6 248.83 386.8 248.1C387 247.3 387.13 246.53 387.2 245.8C387.27 245 387.3 244.2 387.3 243.4C387.3 242.67 387.23 241.9 387.1 241.1C386.5 237.6 384.4 234.3 380.1 227.6C370.57 212.77 361.03 197.93 351.5 183.1C345 173.1 341.8 168 337.4 164.4C336.47 163.6 335.5 162.83 334.5 162.1C333.43 161.43 332.37 160.8 331.3 160.2C330.17 159.6 329.03 159.03 327.9 158.5C326.7 158.03 325.53 157.6 324.4 157.2C318.9 155.6 313 155.6 301 155.6Z" fill="#fff"/>' +
+  '<path d="M283.9 190.6C285.4 186.7 291 186.7 292.5 190.6C295.87 199.7 299.23 208.8 302.6 217.9C303.2 219.6 304.5 220.9 306.1 221.5C315.2 224.87 324.3 228.23 333.4 231.6C337.3 233 337.3 238.6 333.4 240.1C324.3 243.47 315.2 246.83 306.1 250.2C304.4 250.8 303.2 252.1 302.5 253.7C299.17 262.8 295.83 271.9 292.5 281C291 285 285.4 285 283.9 281C280.53 271.9 277.17 262.8 273.8 253.7C273.2 252.1 271.9 250.8 270.3 250.2C261.2 246.83 252.1 243.47 243 240.1C239.1 238.6 239.1 233 243 231.6C252.1 228.23 261.2 224.87 270.3 221.5C271.9 220.9 273.2 219.6 273.9 217.9C273.9 217.9 283.9 190.6 283.9 190.6Z" fill="#30a1f5"/>' +
+  "</svg>"
+);
+
+function startFlappy(stage) {
+  const canvas = document.createElement("canvas");
+  stage.appendChild(canvas);
+  const dpr = window.devicePixelRatio || 1;
+  const W = stage.clientWidth, H = stage.clientHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + "px"; canvas.style.height = H + "px";
+  const ctx = canvas.getContext("2d");
+  ctx.scale(dpr, dpr);
+
+  let y = H / 2, vy = 0, score = 0, run = true, started = false, raf = null;
+  const pipes = [];
+  const GAP = 168, PW = 56, SPEED = 2.3, BX = W * 0.28, R = 17;
+
+  const stars = [];
+  for (let i = 0; i < 26; i++) {
+    stars.push({ x: Math.random() * W, y: Math.random() * H, r: 0.6 + Math.random() * 1.6, s: 0.25 + Math.random() * 0.6 });
+  }
+
+  const flap = () => { if (!run) return; started = true; vy = -6.4; haptic("light"); };
+  stage.addEventListener("pointerdown", flap);
+
+  let spawnT = 0;
+  const loop = () => {
+    if (!run) return;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (const st of stars) {
+      st.x -= st.s;
+      if (st.x < -2) { st.x = W + 2; st.y = Math.random() * H; }
+      ctx.globalAlpha = 0.2 + st.r * 0.25;
+      ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    if (started) {
+      ctx.fillStyle = "rgba(255,255,255,0.09)";
+      ctx.font = "700 64px Unbounded, Manrope, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(score, W / 2, 92);
+
+      spawnT -= 1;
+      if (spawnT <= 0) {
+        spawnT = 95;
+        pipes.push({ x: W + 20, top: 60 + Math.random() * (H - GAP - 160), passed: false });
+      }
+      for (let i = pipes.length - 1; i >= 0; i--) {
+        const p = pipes[i];
+        p.x -= SPEED;
+        if (!p.passed && p.x + PW < BX - R) { p.passed = true; score++; setGameScore(score); haptic("light"); }
+        if (p.x < -PW - 20) pipes.splice(i, 1);
+      }
+      vy += 0.34;
+      y += vy;
+    } else {
+      y = H / 2 + Math.sin(Date.now() / 300) * 8;
+    }
+
+    for (const p of pipes) {
+      const pg = ctx.createLinearGradient(p.x, 0, p.x + PW, 0);
+      pg.addColorStop(0, "#1b3d5c"); pg.addColorStop(0.5, "#2f6491"); pg.addColorStop(1, "#16324c");
+      ctx.fillStyle = pg;
+      ctx.strokeStyle = "rgba(102, 184, 240, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.roundRect(p.x, -10, PW, p.top + 10, 9); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(p.x, p.top + GAP, PW, H - p.top - GAP + 10, 9); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "rgba(0, 194, 255, 0.55)";
+      ctx.beginPath(); ctx.roundRect(p.x - 2, p.top - 4, PW + 4, 4, 3); ctx.fill();
+      ctx.beginPath(); ctx.roundRect(p.x - 2, p.top + GAP, PW + 4, 4, 3); ctx.fill();
+    }
+
+    ctx.save();
+    ctx.translate(BX, y);
+    ctx.rotate(Math.min(0.5, Math.max(-0.4, vy / 12)));
+    ctx.shadowColor = "rgba(48, 161, 245, 0.65)";
+    ctx.shadowBlur = 16;
+    if (COIN_IMG.complete) ctx.drawImage(COIN_IMG, -R, -R, R * 2, R * 2);
+    else { ctx.fillStyle = "#30a1f5"; ctx.beginPath(); ctx.arc(0, 0, R, 0, Math.PI * 2); ctx.fill(); }
+    ctx.restore();
+
+    if (!started) {
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.font = "700 15px Manrope, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Tap to fly", W / 2, H / 2 - 62);
+    }
+
+    if (started) {
+      if (y + R > H - 4 || y - R < 4) { run = false; finishGame(score); return; }
+      for (const p of pipes) {
+        if (BX + R > p.x && BX - R < p.x + PW && (y - R < p.top || y + R > p.top + GAP)) {
+          run = false; finishGame(score); return;
+        }
+      }
+    }
+    raf = requestAnimationFrame(loop);
+  };
+  raf = requestAnimationFrame(loop);
+
+  return {
+    stop() {
+      run = false;
+      if (raf) cancelAnimationFrame(raf);
+      stage.removeEventListener("pointerdown", flap);
+    },
+  };
+}
+
+/* ---------- 4. Gem Rush ---------- */
+function startWhack(stage) {
+  let score = 0, time = 30, run = true, delay = 800;
+  setGameTimer(time);
+  stage.innerHTML = '<div class="wk-grid">' + '<button class="wk-cell"></button>'.repeat(9) + "</div>";
+  const cells = [...stage.querySelectorAll(".wk-cell")];
+  let spawnTimeout = null;
+
+  cells.forEach((cell) => {
+    cell.addEventListener("click", () => {
+      if (!cell.dataset.kind) return;
+      if (cell.dataset.kind === "gem") { score += 15; floatFromEl(cell, "+15", "gp"); haptic("light"); }
+      else {
+        score = Math.max(0, score - 25);
+        stage.classList.add("flash");
+        setTimeout(() => stage.classList.remove("flash"), 250);
+        haptic("error");
+      }
+      setGameScore(score);
+      cell.textContent = "";
+      delete cell.dataset.kind;
+      cell.classList.remove("pop");
+    });
+  });
+
+  const spawn = () => {
+    if (!run) return;
+    const empty = cells.filter((c) => !c.dataset.kind);
+    if (empty.length) {
+      const cell = empty[Math.floor(Math.random() * empty.length)];
+      const isBomb = Math.random() < 0.22;
+      cell.dataset.kind = isBomb ? "bomb" : "gem";
+      cell.textContent = isBomb ? "💣" : "💎";
+      cell.classList.add("pop");
+      setTimeout(() => {
+        cell.textContent = "";
+        delete cell.dataset.kind;
+        cell.classList.remove("pop");
+      }, 680);
+    }
+    delay = Math.max(420, delay - 10);
+    spawnTimeout = setTimeout(spawn, delay);
+  };
+  spawnTimeout = setTimeout(spawn, 500);
+
+  const timer = setInterval(() => {
+    if (!run) return;
+    time--;
+    setGameTimer(time);
+    if (time <= 0) { run = false; finishGame(score); }
+  }, 1000);
+
+  return {
+    stop() { run = false; clearInterval(timer); if (spawnTimeout) clearTimeout(spawnTimeout); },
+  };
+}
+
+const GAME_STARTERS = { catch: startCatch, merge: startMerge, flappy: startFlappy, whack: startWhack };
+
+/* ---------------- navigation ---------------- */
+function switchPage(name) {
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach((b) => b.classList.toggle("active", b.dataset.page === name));
+  $("#page-" + name).classList.add("active");
+  window.scrollTo({ top: 0 });
+  haptic("light");
+  if (name === "farm") renderGameMaxes();
+  if (name === "earn") renderAdProgress();
+}
+document.querySelectorAll(".nav-btn").forEach((btn) =>
+  btn.addEventListener("click", () => switchPage(btn.dataset.page))
+);
+document.querySelectorAll("[data-goto]").forEach((btn) =>
+  btn.addEventListener("click", () => switchPage(btn.dataset.goto))
+);
+
+/* ---------------- ticker ---------------- */
+function buildTicker() {
+  const track = $("#tickerTrack");
+  if (!CFG.app.tickerEnabled) {
+    $("#ticker").style.display = "none";
+    return;
+  }
+  const items = [];
+  const lo = Number(CFG.app.tickerMin), hi = Number(CFG.app.tickerMax);
+  for (let i = 0; i < 12; i++) {
+    const id = String(Math.floor(Math.random() * 9) + 1) + "•••" + String(Math.floor(Math.random() * 900) + 100);
+    const amount = (Math.random() * (hi - lo) + lo).toFixed(2);
+    items.push(
+      '<div class="ticker-item">' + TON_SVG +
+      "<span>User <b>" + id + "</b> withdrew <span class='t-amount'>" + amount + " " + CUR() + "</span></span></div>"
+    );
+  }
+  track.innerHTML = items.join("") + items.join("");
+}
+
+/* ---------------- invite ---------------- */
+$("#copyRefBtn").addEventListener("click", async () => {
+  const btn = $("#copyRefBtn");
+  const full = refLinkFor(ME.refCode);
+  let ok = false;
+  try { await navigator.clipboard.writeText(full); ok = true; }
+  catch {
+    const ta = document.createElement("textarea");
+    ta.value = full;
+    document.body.appendChild(ta);
+    ta.select();
+    try { ok = document.execCommand("copy"); } catch {}
+    ta.remove();
+  }
+  if (ok) {
+    btn.classList.add("copied");
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+    toast("Invite link copied");
+    haptic("success");
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+    }, 1800);
+  } else toast("Could not copy — long-press the link", "error");
+});
+
+$("#shareRefBtn").addEventListener("click", () => {
+  haptic("medium");
+  const url = refLinkFor(ME.refCode);
+  const text = "Join me on " + CFG.app.appName + " — play, mine & earn " + CUR() + "! 💎";
+  const shareUrl = "https://t.me/share/url?url=" + encodeURIComponent(url) + "&text=" + encodeURIComponent(text);
+  if (tg && tg.openTelegramLink) tg.openTelegramLink(shareUrl);
+  else window.open(shareUrl, "_blank");
+});
+
+/* ---------------- withdraw ---------------- */
+let wdMethod = "usdt";
+let pendingWithdrawal = null;
+
+/* MUST match the server's rule exactly.
+
+   This used to read ME.adsTotal, which counts every ad — Monetag, task, game
+   and app-open included — while the server only counts Adsgram views from
+   Earn > Ads. The two disagreed, so a locked user sailed past the button,
+   filled in the form, and only hit "Withdrawals are still locked" on the final
+   Confirm tap. A client-side gate that is looser than the server's turns a
+   clear "not yet" into an error at the worst possible moment. */
+function wdUnlocked() {
+  if (!ME || !CFG) return false;
+  const ads = Number(ME.adsgramAds || 0);
+  const refs = Number(ME.activeRefs || 0);
+  return ads >= Number(CFG.withdraw.unlockAds) && refs >= Number(CFG.withdraw.unlockRefs);
+}
+
+/* The form only appears once the balance can actually fund a request.
+
+   Showing wallet and amount fields to someone who cannot yet withdraw invites
+   them to fill everything in and get refused. Requirements (ads + referrals)
+   are deliberately NOT shown here — they are checked when the user taps
+   Withdraw, so the first screen stays a single simple message. */
+function renderBalanceGate() {
+  const panel = $("#wdNoBalance");
+  const form = $("#wdForm");
+  if (!panel || !form || !ME || !CFG) return false;
+
+  const min = minGd();
+  const bal = Number(ME.balance || 0);
+  const short = bal < min;
+
+  panel.classList.toggle("hidden", !short);
+  form.classList.toggle("hidden", short);
+
+  if (short) {
+    // the badge is outside the swapped panels, so set it here too
+    const badge = $("#wdBadge");
+    if (badge) {
+      badge.classList.add("locked");
+      badge.classList.remove("unlocked");
+      const lbl = $("#wdBadgeLabel");
+      if (lbl) lbl.textContent = "Locked";
+    }
+    const pct = min > 0 ? Math.min(100, Math.round((bal / min) * 100)) : 0;
+    $("#wdMinAmount").textContent = fmt(min) + " " + CUR();
+    $("#wdBalBar").style.width = pct + "%";
+    $("#wdBalProg").textContent =
+      fmt(Math.floor(bal)) + " / " + fmt(min) + " " + CUR() + "  ·  " +
+      fmt(Math.max(0, Math.ceil(min - bal))) + " to go";
+  }
+  return short;
+}
+
+function renderWithdrawLock() {
+  // nothing below matters while the balance itself is short
+  if (renderBalanceGate()) return;
+
+  const needAds = CFG.withdraw.unlockAds;
+  const needRefs = CFG.withdraw.unlockRefs;
+  // adsgramAds = Adsgram-from-Earn only, which is what the server checks.
+  // Using adsTotal here would fill the bar with Monetag views and promise
+  // an unlock the server then refuses.
+  const ads = Math.min(ME.adsgramAds || 0, needAds);
+  const refs = Math.min(ME.activeRefs, needRefs);
+  $("#reqAdsNeed").textContent = needAds;
+  $("#reqRefsNeed").textContent = needRefs;
+  $("#reqAdsLabel").textContent = ads + "/" + needAds;
+  $("#reqAdsBar").style.width = (ads / needAds) * 100 + "%";
+  $("#reqRefsLabel").textContent = refs + "/" + needRefs;
+  $("#reqRefsBar").style.width = (refs / needRefs) * 100 + "%";
+
+  const unlocked = wdUnlocked();
+  const badge = $("#wdBadge");
+  badge.classList.toggle("locked", !unlocked);
+  badge.classList.toggle("unlocked", unlocked);
+  $("#wdBadgeLabel").textContent = unlocked ? "Unlocked" : "Locked";
+
+  const note = $("#reqNote");
+  if (note) {
+    note.textContent = unlocked
+      ? "All set — you can request a payout."
+      : (needAds - ads > 0 ? (needAds - ads) + " more Adsgram ad" + (needAds - ads === 1 ? "" : "s") : "") +
+        (needAds - ads > 0 && needRefs - refs > 0 ? " and " : "") +
+        (needRefs - refs > 0 ? (needRefs - refs) + " more active referral" + (needRefs - refs === 1 ? "" : "s") : "") +
+        " to go.";
+  }
+}
+
+/* requirements sheet — opened when a locked user taps Request Withdrawal */
+function openReqSheet() {
+  renderWithdrawLock();
+  $("#reqModal").classList.remove("hidden");
+  haptic("light");
+}
+$("#reqClose").addEventListener("click", () => $("#reqModal").classList.add("hidden"));
+$("#reqGoEarn").addEventListener("click", () => {
+  $("#reqModal").classList.add("hidden");
+  switchPage("earn");
+});
+$("#reqModal").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.add("hidden");
+});
+
+/* everything is entered and held in GD; the method only decides the payout rail */
+const minGd = () => Number(CFG.withdraw.minWithdrawUsd) * gdPerUsd();
+const feeGd = () => Number(CFG.withdraw.feeUsd) * gdPerUsd();
+
+function renderMethod() {
+  document.querySelectorAll(".method-btn").forEach((b) =>
+    b.classList.toggle("active", b.dataset.method === wdMethod)
+  );
+  if (wdMethod === "ton") {
+    $("#walletLabel").textContent = "TON wallet address";
+    $("#walletInput").placeholder = "UQ… / EQ…";
+    $("#walletInput").value = ME.walletTon || "";
+  } else {
+    $("#walletLabel").textContent = "USDT BEP20 address";
+    $("#walletInput").placeholder = "0x…";
+    $("#walletInput").value = ME.walletUsdt || "";
+  }
+  $("#amountHint").textContent = "(min " + fmt(minGd()) + " " + CUR() + ")";
+  $("#feeNote").textContent =
+    "Flat fee " + fmt(feeGd()) + " " + CUR() + " ($" + Number(CFG.withdraw.feeUsd).toFixed(2) +
+    ") · usually arrives within 24h";
+  $("#amountInput").value = "";
+}
+
+document.querySelectorAll(".method-btn").forEach((btn) =>
+  btn.addEventListener("click", () => { wdMethod = btn.dataset.method; renderMethod(); haptic("light"); })
+);
+
+$("#maxBtn").addEventListener("click", () => {
+  $("#amountInput").value = ME.balance > 0 ? Math.floor(ME.balance) : "";
+  haptic("light");
+});
+
+/* Withdrawal cooldown countdown.
+
+   The server is still the authority — it re-checks on every request — but a
+   live button that always fails is worse than no button, so the UI mirrors the
+   same deadline and counts down to it. */
+let wdCooldownTimer = null;
+
+function wdCooldownLeftMs() {
+  if (!ME || !ME.withdrawNextAt) return 0;
+  const t = new Date(ME.withdrawNextAt).getTime();
+  return Number.isFinite(t) ? Math.max(0, t - Date.now()) : 0;
+}
+
+function renderWithdrawCooldown() {
+  const btn = $("#withdrawBtn");
+  if (!btn) return;
+  const left = wdCooldownLeftMs();
+
+  if (left <= 0) {
+    if (btn.dataset.cooling === "1") {
+      // window just closed — restore the button without a full reload
+      btn.dataset.cooling = "0";
+      btn.disabled = false;
+      btn.classList.remove("cooling");
+      btn.innerHTML = btn.dataset.label || "Request Withdrawal";
+      ME.withdrawNextAt = null;
+    }
+    const note = $("#wdCooldownNote");
+    if (note) note.classList.add("hidden");
+    if (wdCooldownTimer) { clearInterval(wdCooldownTimer); wdCooldownTimer = null; }
+    return;
+  }
+
+  if (btn.dataset.cooling !== "1") {
+    btn.dataset.label = btn.innerHTML;      // keep the icon + original text
+    btn.dataset.cooling = "1";
+  }
+  btn.disabled = true;
+  btn.classList.add("cooling");
+  btn.innerHTML = "Next withdrawal in " + fmtHms(left);
+
+  const note = $("#wdCooldownNote");
+  if (note) {
+    note.classList.remove("hidden");
+    note.innerHTML =
+      "⏳ You can request again in <b>" + fmtHms(left) + "</b>" +
+      (CFG ? " · one request every " + CFG.withdraw.cooldownHours + "h" : "");
+  }
+
+  if (!wdCooldownTimer) wdCooldownTimer = setInterval(renderWithdrawCooldown, 1000);
+}
+
+$("#withdrawBtn").addEventListener("click", () => {
+  // locked users see exactly what's still missing rather than a dead button
+  if (!wdUnlocked()) { openReqSheet(); haptic("error"); return; }
+  const cooling = wdCooldownLeftMs();
+  if (cooling > 0) {
+    toast("You can withdraw again in " + fmtHms(cooling), "error");
+    haptic("error");
+    renderWithdrawCooldown();
+    return;
+  }
+  const address = $("#walletInput").value.trim();
+  const amount = parseFloat($("#amountInput").value);
+  const isTon = wdMethod === "ton";
+
+  const re = isTon ? /^(UQ|EQ|kQ|0Q)[A-Za-z0-9_-]{46}$/ : /^0x[a-fA-F0-9]{40}$/;
+  if (!re.test(address)) {
+    toast(isTon ? "Enter a valid TON wallet address" : "Enter a valid BEP20 (0x…) address", "error");
+    haptic("error"); return;
+  }
+  if (!amount || isNaN(amount) || amount <= 0) { toast("Enter an amount to withdraw", "error"); haptic("error"); return; }
+  if (amount < minGd()) {
+    toast("Minimum is " + fmt(minGd()) + " " + CUR(), "error"); haptic("error"); return;
+  }
+  if (amount > ME.balance) { toast("Not enough balance", "error"); haptic("error"); return; }
+
+  const fee = feeGd();
+  const net = Math.max(amount - fee, 0);
+  pendingWithdrawal = { method: wdMethod, address, amount };
+  $("#cMethod").textContent = isTon ? "GRAM (TON)" : "USDT (BEP20)";
+  $("#cAmount").textContent = fmt(amount) + " " + CUR();
+  $("#cFee").textContent = fmt(fee) + " " + CUR();
+  $("#cWallet").textContent = maskAddress(address);
+  $("#cTotal").textContent = fmt(net) + " " + CUR() + "  ≈ $" + (net / gdPerUsd()).toFixed(2);
+  $("#confirmModal").classList.remove("hidden");
+  haptic("medium");
+});
+
+$("#confirmWithdrawBtn").addEventListener("click", (e) => {
+  const btn = e.currentTarget;
+  if (!pendingWithdrawal) return;
+  guard(btn, async () => {
+    const r = await api("/withdraw", pendingWithdrawal);
+    setBalance(r.balance);
+    ME.withdrawals = ME.withdrawals || [];
+    ME.withdrawals.unshift({
+      id: r.id, method: pendingWithdrawal.method, address: pendingWithdrawal.address,
+      amount: pendingWithdrawal.amount, status: "pending", date: new Date().toISOString(),
+    });
+    pendingWithdrawal = null;
+    $("#confirmModal").classList.add("hidden");
+    $("#amountInput").value = "";
+
+    /* Start the cooldown immediately. Waiting for the next /me refresh would
+       leave the button live for a request the server has already begun
+       refusing, which reads as a random error. */
+    const hrs = Number(CFG.withdraw.cooldownHours) || 0;
+    if (hrs > 0) ME.withdrawNextAt = new Date(Date.now() + hrs * 3600 * 1000).toISOString();
+    renderWithdrawCooldown();
+
+    renderHistory();
+    toast("Withdrawal request submitted");
+    haptic("success");
+  }, (err) => {
+    /* If the server disagrees with us about the unlock, show WHY rather than
+       a bare error — the requirements sheet names exactly what is missing. */
+    const code = (err && (err.code || err.message)) || "";
+    if (code === "locked") {
+      $("#confirmModal").classList.add("hidden");
+      pendingWithdrawal = null;
+      openReqSheet();
+      return true;   // handled
+    }
+    if (code === "withdraw_cooldown") {
+      $("#confirmModal").classList.add("hidden");
+      pendingWithdrawal = null;
+      // api() puts the server's extra fields on err.data, not on err itself
+      const hrs = Number((err && err.data && err.data.waitHours) || CFG.withdraw.cooldownHours) || 0;
+      if (hrs > 0) ME.withdrawNextAt = new Date(Date.now() + hrs * 3600 * 1000).toISOString();
+      renderWithdrawCooldown();
+      return false;  // let the normal toast explain it too
+    }
+    return false;
+  });
+});
+
+$("#cancelWithdrawBtn").addEventListener("click", () => {
+  pendingWithdrawal = null;
+  $("#confirmModal").classList.add("hidden");
+});
+$("#confirmModal").addEventListener("click", (e) => {
+  if (e.target === e.currentTarget) { pendingWithdrawal = null; e.currentTarget.classList.add("hidden"); }
+});
+
+const maskAddress = (a) => (a && a.length > 12 ? a.slice(0, 6) + "…" + a.slice(-4) : a || "");
+
+function renderHistory() {
+  const list = $("#historyList");
+  const items = ME.withdrawals || [];
+  if (!items.length) {
+    list.innerHTML =
+      '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><b>No withdrawals yet</b><span>Your payouts will show up here</span></div>';
+    return;
+  }
+  list.innerHTML = "";
+  for (const w of items) {
+    const rail = w.method === "ton" ? "GRAM" : "USDT";
+    const tile = w.status === "paid" ? "green" : w.status === "rejected" ? "violet" : "amber";
+    const label = w.status === "paid" ? "Completed" : w.status === "rejected" ? "Rejected" : "Pending";
+    const el = document.createElement("div");
+    el.className = "history-item";
+    el.innerHTML =
+      '<div class="icon-tile ' + tile + '">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V7"/><path d="m6 12 6-6 6 6"/><path d="M5 21h14"/></svg></div>' +
+      '<div class="h-info"><div class="h-addr"></div><div class="h-date"></div></div>' +
+      '<div class="h-right"><div class="h-amount"></div><div class="h-status ' +
+      (w.status === "paid" ? "done" : "pending") + '">' + label + "</div></div>";
+    el.querySelector(".h-addr").textContent = rail + " · " + maskAddress(w.address);
+    el.querySelector(".h-date").textContent = new Date(w.date).toLocaleDateString("en-GB", {
+      day: "numeric", month: "short", year: "numeric",
+    });
+    el.querySelector(".h-amount").textContent = "-" + fmt(w.amount) + " " + CUR();
+    list.appendChild(el);
+  }
+}
+
+/* ---------------- theme ---------------- */
+function lighten(hex, amt) {
+  const n = parseInt(hex.replace("#", ""), 16);
+  const r = Math.min(255, (n >> 16) + amt);
+  const g = Math.min(255, ((n >> 8) & 0xff) + amt);
+  const b = Math.min(255, (n & 0xff) + amt);
+  return "#" + ((r << 16) | (g << 8) | b).toString(16).padStart(6, "0");
+}
+
+function applyTheme() {
+  const insideTelegram = !!(tg && tg.initData);
+  const scheme = insideTelegram && tg.colorScheme ? tg.colorScheme : "dark";
+  document.documentElement.dataset.theme = scheme;
+  const p = (tg && tg.themeParams) || {};
+  const root = document.documentElement.style;
+  if (p.button_color) {
+    root.setProperty("--accent", p.button_color);
+    root.setProperty("--accent-2", lighten(p.button_color, 34));
+  }
+  root.setProperty("--header-bg", scheme === "dark" ? "rgba(14, 22, 33, 0.85)" : "rgba(255, 255, 255, 0.85)");
+  if (insideTelegram) {
+    try {
+      const header = p.secondary_bg_color || p.bg_color;
+      if (header && tg.setHeaderColor) tg.setHeaderColor(header);
+      if (tg.setBackgroundColor) tg.setBackgroundColor(p.bg_color || header);
+    } catch {}
+  }
+}
+
+function initTelegram() {
+  if (!tg) return;
+  try {
+    tg.ready();
+    tg.expand();
+    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+    applyTheme();
+    if (tg.onEvent) tg.onEvent("themeChanged", applyTheme);
+  } catch {}
+}
+
+/* ============================================================
+   GATE SCREENS — verification checklist, device ban, IP retry
+   ============================================================ */
+function showGate({ icon, title, text, list, action, note, onAction }) {
+  const splash = $("#splash");
+  if (splash) splash.remove();
+  $("#app").style.display = "none";
+  const gate = $("#gate");
+  gate.classList.remove("hidden");
+
+  $("#gateIcon").className = "gate-icon " + (icon || "");
+  $("#gateTitle").textContent = title;
+  $("#gateText").textContent = text;
+  $("#gateNote").textContent = note || "";
+  $("#verifyList").innerHTML = list || "";
+
+  const btn = $("#gateAction");
+  if (action) {
+    btn.style.display = "";
+    btn.textContent = action;
+    btn.disabled = false;
+    btn.onclick = onAction;
+  } else {
+    btn.style.display = "none";
+  }
+}
+
+function hideGate() {
+  $("#gate").classList.add("hidden");
+  $("#app").style.display = "";
+}
+
+/* permanent — one device, several accounts */
+function showDeviceBan(reason) {
+  showGate({
+    icon: "danger",
+    title: "Account banned",
+    text: "Multiple accounts were detected on this device. Creating more than one account is not allowed.",
+    note: reason || "",
+  });
+}
+
+/* soft — shared IP. Never permanent: switch network and retry. */
+function showIpBlocked(data) {
+  showGate({
+    icon: "warn",
+    title: "Too many accounts on this network",
+    text:
+      "Your IP address is already used by " + (data.count || "several") +
+      " accounts (limit " + (data.limit || "?") + "). Switch to mobile data or another Wi-Fi, then tap retry.",
+    action: "Retry",
+    note: "Your account is not banned — only this network is blocked.",
+    onAction: () => { $("#gateAction").disabled = true; boot(); },
+  });
+}
+
+/* No public @username. Retryable by design: the user sets one in Telegram,
+   reopens, and taps retry — initData carries the new username and the server
+   refreshes it on every open, so there is nothing to wait for. */
+function showUsernameGate() {
+  showGate({
+    icon: "warn",
+    title: "Add a Telegram username",
+    text:
+      "To keep " + ((CFG && CFG.app.appName) || "Gram Drop") + " free of fake accounts, " +
+      "you need a public @username on your Telegram profile.",
+    list:
+      '<div class="verify-row"><div class="vr-tick">1</div><div class="vr-info">' +
+      '<b>Open Telegram Settings</b><span>Tap your profile, then Edit</span></div></div>' +
+      '<div class="verify-row"><div class="vr-tick">2</div><div class="vr-info">' +
+      '<b>Set a Username</b><span>Choose any available @name</span></div></div>' +
+      '<div class="verify-row"><div class="vr-tick">3</div><div class="vr-info">' +
+      '<b>Come back and tap Retry</b><span>You will be let straight in</span></div></div>',
+    action: "Retry",
+    note: "Your account is not banned — this takes about 30 seconds.",
+    onAction: () => {
+      const btn = $("#gateAction");
+      btn.disabled = true;
+      btn.textContent = "Checking…";
+      /* Telegram caches initData for the session, so a username set while the
+         app was open may not be visible until it reloads. Reload once, then
+         fall back to a normal re-boot if reloading isn't possible. */
+      try {
+        if (tg && typeof tg.close === "function" && window.location) {
+          window.location.reload();
+          return;
+        }
+      } catch {}
+      boot();
+    },
+  });
+}
+
+/* verification checklist — join the channels, then verify */
+function showJoinGate(channels) {
+  const rows = channels.map((c, i) => `
+    <div class="verify-row ${c.joined ? "done" : ""}" data-vi="${i}">
+      <div class="vr-tick">${c.joined ? "✓" : i + 1}</div>
+      <div class="vr-info"><b></b><span>${c.joined ? "Joined" : "Not joined yet"}</span></div>
+      <button class="btn small vr-open" ${c.joined ? "disabled" : ""}>Join</button>
+    </div>`).join("");
+
+  showGate({
+    title: "Verify to continue",
+    text: "Join our channels to unlock " + ((CFG && CFG.app.appName) || "Gram Drop"),
+    list: rows,
+    action: "Verify",
+    onAction: async () => {
+      const btn = $("#gateAction");
+      btn.disabled = true;
+      btn.textContent = "Checking…";
+      try {
+        const st = await api("/channel/check", {});
+        if (st.allJoined) {
+          btn.textContent = "Verified ✓";
+          haptic("success");
+          setTimeout(boot, 500);
+        } else {
+          showJoinGate(st.channels);
+          toast("Please join every channel first", "error");
+          haptic("error");
+        }
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Verify";
+        toast(humanError(e.code), "error");
+      }
+    },
+  });
+
+  // titles set as text (never innerHTML) — channel names are admin-supplied
+  $("#verifyList").querySelectorAll(".verify-row").forEach((row, i) => {
+    row.querySelector("b").textContent = channels[i].title;
+    const open = row.querySelector(".vr-open");
+    if (!channels[i].joined) {
+      open.addEventListener("click", () => {
+        const url = channels[i].url;
+        if (tg && tg.openTelegramLink && /^https?:\/\/t\.me\//i.test(url)) tg.openTelegramLink(url);
+        else if (tg && tg.openLink) tg.openLink(url);
+        else window.open(url, "_blank");
+        haptic("light");
+      });
+    }
+  });
+}
+
+function showBlocker(message, title) {
+  showGate({ title: title || "Gram Drop", text: message });
+}
+
+/* ---------------- boot ---------------- */
+function hideSplash() {
+  const el = $("#splash");
+  if (!el) return;
+  el.classList.add("hide");
+  setTimeout(() => el.remove(), 500);
+}
+
+/* custom logo from the admin panel, applied wherever the coin mark appears */
+function applyBranding() {
+  const url = CFG.app.logoUrl;
+  $("#brandName").innerHTML = "";
+  $("#brandName").textContent = CFG.app.appName || "Gram Drop";
+  if (!url) return;
+  const img = (cls) => {
+    const i = document.createElement("img");
+    i.src = url;
+    i.alt = "";
+    i.className = cls;
+    i.onerror = () => i.remove(); // fall back to whatever was there
+    return i;
+  };
+  const brand = $("#brandLogo");
+  brand.innerHTML = "";
+  brand.appendChild(img("logo-img"));
+}
+
+let booting = false;
+let openAdShown = false;   // the engagement ad fires once per app load
+
+async function boot() {
+  if (booting) return;
+  booting = true;
+  try {
+    const data = await api("/me");
+    CFG = data.config;
+    ME = data.user;
+    ME.withdrawals = data.withdrawals;
+    TASKS = data.tasks;
+
+    if (CFG.maintenance) {
+      showBlocker(CFG.app.maintenanceMsg || "Under maintenance — back shortly", "Be right back");
+      return;
+    }
+
+    hideGate();
+    applyBranding();
+    buildTicker();
+    renderUser();
+    renderTasks();
+    renderMethod();
+    renderGameMaxes();
+    renderPlayCounts();
+    renderPendingClaim();
+    if (CFG.app.announcement) toast(CFG.app.announcement);
+    hideSplash();
+
+    // warm both SDKs so the first ad tap isn't waiting on a script download
+    preloadAdSdks();
+
+    /* Engagement ad on app open — fire and forget, never blocks the UI and
+       never pays, so no click detection. The Adsgram SDK is already being
+       fetched from the top of this file, so this opens promptly. */
+    if (CFG.ads.openAdEnabled && !openAdShown) {
+      openAdShown = true;
+      setTimeout(() => {
+        runAdSession("open", { silent: true }).catch((e) =>
+          console.warn("[ads] open", (e && e.message) || e)
+        );
+      }, 300);
+    }
+  } catch (e) {
+    const d = e.data || {};
+    if (e.code === "device_banned") showDeviceBan(d.reason);
+    else if (e.code === "ip_blocked") showIpBlocked(d);
+    else if (e.code === "username_required") showUsernameGate();
+    else if (e.code === "join_required") {
+      if (d.app) CFG = CFG || { app: d.app };
+      showJoinGate(d.channels || []);
+    }
+    else if (e.code === "invalid_init_data")
+      showBlocker("Please open this app from inside Telegram.", "Open in Telegram");
+    else if (e.code === "banned")
+      showDeviceBan(d.reason);
+    else if (e.code === "maintenance")
+      showBlocker(d.message || "Under maintenance — back shortly", "Be right back");
+    else
+      showGate({
+        icon: "warn",
+        title: "Connection problem",
+        text: "Couldn't reach the server. Check your connection and try again.",
+        action: "Retry",
+        onAction: () => { $("#gateAction").disabled = true; boot(); },
+      });
+  } finally {
+    booting = false;
+  }
+}
+
+(async () => {
+  applyTheme();
+  initTelegram();
+  /* Start fetching the Adsgram script immediately — its URL is fixed, only the
+     block id comes from config. Waiting for /me first is what made the opening
+     interstitial show up seconds late. */
+  loadAdsgramSdk().catch(() => {});
+  const minSplash = new Promise((r) => setTimeout(r, 1400));
+  const first = boot();
+  await Promise.all([minSplash, first]);
+})();
+
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"bfb34bc822774c8b96c2db64d2a8fc01","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>
