@@ -603,7 +603,11 @@
 "use strict";
 
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-const API = "/api";
+/* Frontend and backend are on different domains (GitHub Pages for the
+   static files, Cloudflare Worker for the API), so this MUST be an
+   absolute URL — a relative "/api" would resolve against GitHub Pages
+   itself, which has no server and returns 404. */
+const API = "https://silent-mode-0a66.ahmedrabieharoun.workers.dev/api";
 
 /* Filled from GET /api/me — never trusted as a source of truth for money. */
 let CFG = null;
